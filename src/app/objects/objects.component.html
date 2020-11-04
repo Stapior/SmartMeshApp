@@ -1,0 +1,54 @@
+<div class="content">
+  <mat-accordion>
+    <mat-expansion-panel *ngFor="let object of objects$ | async">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Nazwa: {{object.name}}
+        </mat-panel-title>
+        <mat-panel-description>
+          Typ: {{object.objectType}} Opis: {{object.description}}
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <div class="content">
+        <form class="form" #objectForm="ngForm">
+          <mat-form-field floatLabel="always">
+            <input matInput placeholder="Nazwa"
+                   [(ngModel)]="object.name"
+                   name="Nazwa">
+          </mat-form-field>
+          <mat-form-field floatLabel="always">
+            <input matInput placeholder="Opis"
+                   [(ngModel)]="object.description"
+                   name="Opis">
+          </mat-form-field>
+          <mat-form-field floatLabel="always">
+            <input matInput placeholder="Typ urządzenia"
+                   [(ngModel)]="object.objectType"
+                   disabled
+                   name="Typ urządzenia">
+          </mat-form-field>
+          <mat-form-field floatLabel="always">
+            <input matInput placeholder="Identyfikator węzła"
+                   [(ngModel)]="object.nodeId"
+                   disabled
+                   name="Identyfikator węzła">
+          </mat-form-field>
+          <mat-form-field floatLabel="always">
+            <input matInput placeholder="Identyfikator wewnętrzny"
+                   [(ngModel)]="object.objectId"
+                   disabled
+                   name="Identyfikator wewnętrzny">
+          </mat-form-field>
+        </form>
+        <div class="buttons-container" >
+          <button mat-raised-button color="primary"
+                  (click)="updateCourse(object)">
+            Zapisz
+          </button>
+        </div>
+
+      </div>
+    </mat-expansion-panel>
+  </mat-accordion>
+</div>
+
