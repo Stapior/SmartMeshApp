@@ -1,0 +1,24 @@
+:host {
+  .logo span {
+    color: white;
+    font-size: 22px;
+  }
+
+  .logo mat-icon {
+    color: white;
+    margin-right: 3px;
+  }
+
+  .logo {
+    cursor: pointer;
+  }
+
+  .spacer {
+    flex: 1 1 auto;
+  }
+
+  .menu-right {
+    margin-left: 20px;
+  }
+
+}

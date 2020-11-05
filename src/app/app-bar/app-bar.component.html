@@ -1,0 +1,41 @@
+<mat-toolbar color="primary" class="mat-elevation-z6">
+  <div fxShow="true" fxHide.gt-sm="true">
+    <button mat-icon-button (click)="sidenav.toggle()">
+      <mat-icon>menu</mat-icon>
+    </button>
+  </div>
+  <div>
+    <button mat-button disabled class="logo">
+      <mat-icon>home</mat-icon>
+      <span>MeshHomeApp</span>
+    </button>
+  </div>
+  <div fxShow="true" fxHide.lt-md="true" class="toolbar-buttons">
+    <button mat-button routerLinkActive="active-link" routerLink="objects">Obiekty
+    </button>
+    <button mat-button routerLinkActive="active-link" routerLink="reads">Wartości czujników
+    </button>
+    <button mat-button routerLinkActive="active-link" routerLink="climate">Komfort klimatyczny
+    </button>
+    <span class="spacer"></span>
+    <button mat-raised-button class="menu-right" color="warn" (click)="authService.SignOut()">Logout
+    </button>
+  </div>
+</mat-toolbar>
+<mat-sidenav-container fxFlexFill class="example-container">
+  <mat-sidenav color="primary" #sidenav fxLayout="column" mode="over" opened="false" fxHide.gt-sm="true">
+    <div fxLayout="column" fxLayoutGap="10px">
+      <a mat-button routerLinkActive="active-link" routerLink="objects">Obiekty</a>
+      <a mat-button routerLinkActive="active-link" routerLink="reads">Wartości czujników</a>
+      <a mat-button routerLinkActive="active-link" routerLink="climate">Komfort klimatyczny</a>
+      <div fxFlexAlign="center">
+        <button mat-raised-button color="warn" (click)="authService.SignOut()">Logout
+        </button>
+      </div>
+    </div>
+  </mat-sidenav>
+  <mat-sidenav-content fxFlexFill>
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>
+
