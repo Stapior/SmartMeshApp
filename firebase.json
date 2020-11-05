@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "public": "dist/HomeMeshApp",
+    "public": "dist",
     "ignore": [
       "firebase.json",
       "**/.*",
@@ -9,7 +9,7 @@
     "rewrites": [
       {
         "source": "**",
-        "destination": "/dist/HomeMeshApp/index.html"
+        "destination": "/index.html"
       }
     ]
   }

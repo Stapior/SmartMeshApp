@@ -1,37 +1,56 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import {BrowserModule} from '@angular/platform-browser';
+import {NgModule} from '@angular/core';
 
-import { AppComponent } from './app.component';
+import {AppComponent} from './app.component';
 import {AngularFireModule} from '@angular/fire';
 import {AngularFireDatabaseModule} from '@angular/fire/database';
 import {environment} from '../environments/environment';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MaterialModule} from './material/material.module';
 import {RouterModule} from '@angular/router';
-import { AppRoutingModule } from './routing/app-routing.module';
-import { ObjectsComponent } from './objects/objects.component';
-import { ClimateComponent } from './climate/climate.component';
-import { ReadsComponent } from './reads/reads.component';
-import {FormsModule} from '@angular/forms';
+import {AppRoutingModule} from './routing/app-routing.module';
+import {ObjectsComponent} from './objects/objects.component';
+import {ClimateComponent} from './climate/climate.component';
+import {ReadsComponent} from './reads/reads.component';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {AngularFireAuthModule} from '@angular/fire/auth';
+import {SignInComponent} from './login/sign-in/sign-in.component';
+import {SignUpComponent} from './login/sign-up/sign-up.component';
+import {ForgotPasswordComponent} from './login/forgot-password/forgot-password.component';
+import {VerifyEmailComponent} from './login/verify-email/verify-email.component';
+import {AppBarComponent} from '../app-bar/app-bar.component';
+import {LoginBarComponent} from './login/login-bar.component';
+import {FlexLayoutModule} from '@angular/flex-layout';
+
 
 @NgModule({
   declarations: [
     AppComponent,
     ObjectsComponent,
     ClimateComponent,
-    ReadsComponent
+    ReadsComponent,
+    SignInComponent,
+    SignUpComponent,
+    ForgotPasswordComponent,
+    VerifyEmailComponent,
+    AppBarComponent,
+    LoginBarComponent
   ],
   imports: [
     BrowserModule,
     AngularFireModule.initializeApp(environment.firebaseConfig),
     AngularFireDatabaseModule,
+    AngularFireAuthModule,
     BrowserAnimationsModule,
     MaterialModule,
     RouterModule,
     AppRoutingModule,
     FormsModule,
+    ReactiveFormsModule,
+    FlexLayoutModule
   ],
   providers: [],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+}

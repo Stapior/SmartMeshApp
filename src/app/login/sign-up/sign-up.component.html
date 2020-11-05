@@ -1,0 +1,43 @@
+<div class="login-wrapper" fxLayout="row" fxLayoutAlign="center center">
+    <mat-card class="box">
+      <mat-card-header>
+        <mat-card-title>Register</mat-card-title>
+      </mat-card-header>
+
+      <form class="example-form" #registerForm="ngForm">
+
+        <mat-card-content>
+
+          <mat-form-field class="example-full-width">
+            <input matInput placeholder="Email" name="email" required email ngModel #email="ngModel">
+          </mat-form-field>
+
+          <mat-form-field class="example-full-width">
+            <input matInput placeholder="Password" name="password" required ngModel #password="ngModel"
+                   [type]="hide ? 'password' : 'text'" [minlength]="6">
+            <button mat-icon-button matSuffix type="button" (click)="hide = !hide"
+                    [attr.aria-label]="'Hide password'"
+                    [attr.aria-pressed]="hide">
+              <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+            </button>
+          </mat-form-field>
+
+        </mat-card-content>
+
+        <button [disabled]="registerForm.untouched || registerForm.invalid" mat-stroked-button color="accent"
+                class="btn-block" (click)="authService.SignUp(email.value, password.value)">Register
+        </button>
+
+      </form>
+      <div class="btn-block">
+        <button mat-flat-button color="primary" class="btn-block"
+                (click)="authService.GoogleAuth()">Continue with Google
+        </button>
+      </div>
+      <div class="btn-block">
+        <button mat-flat-button color="primary" class="btn-block"
+                (click)="signUp()">Already have an account?
+        </button>
+      </div>
+    </mat-card>
+  </div>
