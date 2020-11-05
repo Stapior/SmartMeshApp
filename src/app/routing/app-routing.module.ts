@@ -8,7 +8,7 @@ import {ForgotPasswordComponent} from '../login/forgot-password/forgot-password.
 import {VerifyEmailComponent} from '../login/verify-email/verify-email.component';
 import {SignUpComponent} from '../login/sign-up/sign-up.component';
 import {AuthGuard} from '../shared/guard/auth.guard';
-import {AppBarComponent} from '../../app-bar/app-bar.component';
+import {AppBarComponent} from '../app-bar/app-bar.component';
 import {LoginBarComponent} from '../login/login-bar.component';
 
 

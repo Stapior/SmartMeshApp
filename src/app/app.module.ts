@@ -18,7 +18,7 @@ import {SignInComponent} from './login/sign-in/sign-in.component';
 import {SignUpComponent} from './login/sign-up/sign-up.component';
 import {ForgotPasswordComponent} from './login/forgot-password/forgot-password.component';
 import {VerifyEmailComponent} from './login/verify-email/verify-email.component';
-import {AppBarComponent} from '../app-bar/app-bar.component';
+import {AppBarComponent} from './app-bar/app-bar.component';
 import {LoginBarComponent} from './login/login-bar.component';
 import {FlexLayoutModule} from '@angular/flex-layout';
 
