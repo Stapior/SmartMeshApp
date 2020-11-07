@@ -21,6 +21,7 @@ import {VerifyEmailComponent} from './login/verify-email/verify-email.component'
 import {AppBarComponent} from './app-bar/app-bar.component';
 import {LoginBarComponent} from './login/login-bar.component';
 import {FlexLayoutModule} from '@angular/flex-layout';
+import {NgxChartsModule} from '@swimlane/ngx-charts';
 
 
 @NgModule({
@@ -47,7 +48,8 @@ import {FlexLayoutModule} from '@angular/flex-layout';
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    FlexLayoutModule
+    FlexLayoutModule,
+    NgxChartsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
