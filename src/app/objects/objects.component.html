@@ -1,4 +1,11 @@
 <div class="content">
+  <mat-form-field>
+    <mat-select [(value)]="currentType" (selectionChange)="onChangeType($event)" [placeholder]="'Filter objects by type'">
+      <mat-option *ngFor="let type of types | async" [value]="type">
+        {{ type }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
   <mat-accordion>
     <mat-expansion-panel *ngFor="let object of objects$ | async">
       <mat-expansion-panel-header>
