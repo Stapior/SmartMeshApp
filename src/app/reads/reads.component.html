@@ -1,22 +1,22 @@
 <div  fxLayout="row" fxLayoutAlign="center center">
+
   <form class="example-form" #readsFrom="ngForm" >
+    <mat-form-field>
+      <mat-select [placeholder]="'Select a sensor'" required name="sensorSelect" ngModel #sensorInput="ngModel">
+        <mat-option *ngFor="let sensor of availableSensors$ | async" [value]="sensor">
+          {{ sensor.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
     <mat-form-field appearance="fill">
       <mat-label>Enter a date range</mat-label>
       <mat-date-range-input [rangePicker]="picker">
-        <input matStartDate placeholder="Start date" name="start" [(ngModel)]="startDate">
-        <input matEndDate placeholder="End date" name="end" [(ngModel)]="endDate">
+        <input matStartDate placeholder="Start date" name="start" #startDateInput="ngModel" [(ngModel)]="startDate">
+        <input matEndDate placeholder="End date" name="end" #endDateInput="ngModel" [(ngModel)]="endDate">
       </mat-date-range-input>
       <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-date-range-picker #picker></mat-date-range-picker>
-
-      <mat-error *ngIf="readsFrom.controls['start'].hasError('matStartDateInvalid')">Invalid start date</mat-error>
-      <mat-error *ngIf="readsFrom.controls['end'].hasError('matEndDateInvalid')">Invalid end date</mat-error>
     </mat-form-field>
-    <div class="btn-block">
-      <button mat-stroked-button  class="btn-block"
-              (click)="loadData()">LoadData
-      </button>
-    </div>
     <ngx-charts-line-chart
       [view]="view"
       [scheme]="colorScheme"
