@@ -5,7 +5,8 @@ import {MeshObject} from '../objects/object';
 import {map, switchMap} from 'rxjs/operators';
 import {ObjectsStore} from '../objects/objects-store.service';
 import {NgModel} from '@angular/forms';
-import {SENSOR_TYPES} from './SensorTypes';
+import {SENSOR_TYPES} from './sensor-types';
+
 
 
 @Component({
