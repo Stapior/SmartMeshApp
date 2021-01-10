@@ -28,9 +28,14 @@
       [xAxisLabel]="xAxisLabel"
       [yAxisLabel]="yAxisLabel"
       [timeline]="timeline"
-      [results]="multi"
+      [results]="chartsSeries"
     >
     </ngx-charts-line-chart>
+    <ng-container *ngIf="averageValue">
+      Average value: {{averageValue}}
+      Min value: {{minValue}}
+      Max value:{{maxValue}}
+    </ng-container>
   </form>
 
 </div>

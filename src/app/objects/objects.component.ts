@@ -4,6 +4,7 @@ import {MeshObject} from './object';
 import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
 import {MatSelectChange} from '@angular/material/select';
 import {map} from 'rxjs/operators';
+import {MatButtonToggle} from '@angular/material/button-toggle';
 
 @Component({
   selector: 'app-objects',
@@ -35,7 +36,7 @@ export class ObjectsComponent implements OnInit {
     this.objectsStore.update(object);
   }
 
-  onChangeType(value: MatSelectChange): void {
-    this.type.next(value.value);
+  onChangeType(value: string): void {
+    this.type.next(value);
   }
 }
