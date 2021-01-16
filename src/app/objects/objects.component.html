@@ -1,11 +1,10 @@
 <div class="content">
-  <mat-form-field>
-    <mat-select [(value)]="currentType" (selectionChange)="onChangeType($event)" [placeholder]="'Filter objects by type'">
-      <mat-option *ngFor="let type of types | async" [value]="type">
-        {{ type }}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
+
+    <mat-button-toggle-group name="fontStyle" aria-label="Font Style" [(value)]="currentType"
+                             (valueChange)="onChangeType($event)" >
+      <mat-button-toggle *ngFor="let type of types | async" [value]="type">{{type}}</mat-button-toggle>
+    </mat-button-toggle-group>
+
   <mat-accordion>
     <mat-expansion-panel *ngFor="let object of objects$ | async">
       <mat-expansion-panel-header>
@@ -48,7 +47,7 @@
           </mat-form-field>
 
         </form>
-        <div class="buttons-container" >
+        <div class="buttons-container">
           <button mat-raised-button color="primary"
                   (click)="updateCourse(object)">
             Zapisz
