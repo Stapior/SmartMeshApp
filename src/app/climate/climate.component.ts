@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, ViewChild} from '@angular/core';
 import {AngularFirestore} from '@angular/fire/firestore';
-import {combineLatest, Observable, Subject} from 'rxjs';
+import {combineLatest, Observable, of, Subject} from 'rxjs';
 import {MeshObject} from '../objects/object';
 import {map, switchMap, tap} from 'rxjs/operators';
 import {ObjectsStore} from '../objects/objects-store.service';
@@ -63,7 +63,7 @@ export class ClimateComponent implements AfterViewInit {
         return this.firestore.collection('objects/' + sensor.id + '/reads', ref => ref.where('time', '>', selectedDate)
           .where('time', '<', this.getDatePlusDays(selectedDate, 1))).snapshotChanges();
       }
-      return null;
+      return of(null);
     })).subscribe(value => {
       if (value) {
         const map1 = value.map(e => {
