@@ -86,6 +86,24 @@ export class ReadsComponent implements AfterViewInit {
       this.xAxisLabel = sensorData?.xLabel;
       this.yAxisLabel = sensorData?.yLabel;
 
+      // this gives an object with dates as keys
+      const groups = sensorDataSeries.reduce((groups, values) => {
+        const month = values.name.getMonth();
+        if (!groups[month]) {
+          groups[month] = [];
+        }
+        groups[month].push(values.value);
+        return groups;
+      }, {});
+
+      // Edit: to add it in the array format instead
+      const groupArrays = Object.keys(groups).map((month) => {
+        return {
+          month,
+          values: groups[month]
+        };
+      });
+      console.log(groupArrays);
     });
 
     this.availableSensors$ = this.objectsStore.getAllObjects().pipe(map(objects => objects.filter(object => {
