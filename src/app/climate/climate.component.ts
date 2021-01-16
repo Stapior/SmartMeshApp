@@ -22,7 +22,7 @@ export class ClimateComponent implements AfterViewInit {
   colorScheme = {
     domain: ['#5AA454', '#E44D25', '#CFC0BB', '#7aa3e5', '#a8385d', '#aae3f5']
   };
-  selectedDate: Date  = new Date();
+  selectedDate: Date = new Date();
   chartSeries: any[];
   availableSensors$: Observable<MeshObject[]>;
   range: Subject<any> = new Subject<any>();
@@ -57,18 +57,24 @@ export class ClimateComponent implements AfterViewInit {
     const sensor$ = this.sensorInput.valueChanges;
 
     const selectedDate$ = this.selectedDateInput.valueChanges;
-    selectedDate$.subscribe(value => {debugger})
 
     combineLatest([sensor$, selectedDate$]).pipe(tap(([sensor, selectedDate]) => console.log('data', selectedDate)), switchMap(([sensor, selectedDate]) => {
-      return this.firestore.collection('objects/' + sensor.id + '/reads', ref => ref.where('time', '>', selectedDate)
-        .where('time', '<', this.getDatePlusDays(selectedDate, 1))).snapshotChanges();
+      if (sensor && selectedDate) {
+        return this.firestore.collection('objects/' + sensor.id + '/reads', ref => ref.where('time', '>', selectedDate)
+          .where('time', '<', this.getDatePlusDays(selectedDate, 1))).snapshotChanges();
+      }
+      return null;
     })).subscribe(value => {
-      const map1 = value.map(e => {
-        const data = e.payload.doc.data();
-        // @ts-ignore
-        return {name: data.time.toDate(), value: data.value};
-      });
-      this.chartSeries = [{name: 'czujnikTemp', series: map1}];
+      if (value) {
+        const map1 = value.map(e => {
+          const data = e.payload.doc.data();
+          // @ts-ignore
+          return {name: data.time.toDate(), value: data.value};
+        });
+        this.chartSeries = [{name: 'czujnikTemp', series: map1}];
+      } else {
+        this.chartSeries = [];
+      }
     });
 
 
