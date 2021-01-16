@@ -8,7 +8,6 @@ import {NgModel} from '@angular/forms';
 import {SENSOR_TYPES} from './sensor-types';
 
 
-
 @Component({
   selector: 'app-reads',
   templateUrl: './reads.component.html',
@@ -75,11 +74,11 @@ export class ReadsComponent implements AfterViewInit {
       const rawValues: number[] = value.values.map(e => {
         const data = e.payload.doc.data();
         // @ts-ignore
-        return  data.value;
+        return data.value;
       });
 
       this.maxValue = Math.max.apply(Math, rawValues);
-      this.minValue =  Math.min.apply(Math, rawValues);
+      this.minValue = Math.min.apply(Math, rawValues);
       this.averageValue = sum / value.values.length;
       this.chartsSeries = [{name: value.sensor.name, series: sensorDataSeries}];
       const sensorData = SENSOR_TYPES[value.sensor.objectType];
@@ -87,13 +86,13 @@ export class ReadsComponent implements AfterViewInit {
       this.yAxisLabel = sensorData?.yLabel;
 
       // this gives an object with dates as keys
-      const groups = sensorDataSeries.reduce((groups, values) => {
+      const groups = sensorDataSeries.reduce((groupsTmp, values, {}) => {
         const month = values.name.getMonth();
-        if (!groups[month]) {
-          groups[month] = [];
+        if (!groupsTmp[month]) {
+          groupsTmp[month] = [];
         }
-        groups[month].push(values.value);
-        return groups;
+        groupsTmp[month].push(values.value);
+        return groupsTmp;
       }, {});
 
       // Edit: to add it in the array format instead
