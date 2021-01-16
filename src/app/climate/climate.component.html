@@ -1,6 +1,6 @@
-<div  fxLayout="row" fxLayoutAlign="center center">
+<div fxLayout="row" fxLayoutAlign="center center">
 
-  <form class="example-form" #readsFrom="ngForm" >
+  <form class="example-form" #climateForm="ngForm">
     <mat-form-field>
       <mat-select [placeholder]="'Select a sensor'" required name="sensorSelect" ngModel #sensorInput="ngModel">
         <mat-option *ngFor="let sensor of availableSensors$ | async" [value]="sensor">
@@ -8,22 +8,13 @@
         </mat-option>
       </mat-select>
     </mat-form-field>
-    
-    <mat-form-field appearance="fill">
-      <mat-label>Enter a date range</mat-label>
-      <mat-date-range-input>
-        <input matInput [matDatepicker]="picker" placeholder="Start date" name="start" #startDateInput="ngModel" [(ngModel)]="startDate">
-      </mat-date-range-input>
-      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-      <mat-datepicker #picker></mat-datepicker>
+
+    <mat-form-field >
+      <input  matInput [matDatepicker]="selectedDateDatePicker" placeholder="Select date to compute climate comfort"
+             name="selectedDate" #selectedDateInput="ngModel" [(ngModel)]="selectedDate">
+      <mat-datepicker-toggle [for]="selectedDateDatePicker"></mat-datepicker-toggle>
+      <mat-datepicker #selectedDateDatePicker></mat-datepicker>
     </mat-form-field>
-
-
-
-    <mat-form-field>
-      <mat-label>Favorite food</mat-label>
-      <input matInput placeholder="Data" [value] = "endDate">
-    </mat-form-field> 
 
     <ngx-charts-line-chart
       [view]="view"
@@ -36,7 +27,7 @@
       [xAxisLabel]="xAxisLabel"
       [yAxisLabel]="yAxisLabel"
       [timeline]="timeline"
-      [results]="multi"
+      [results]="chartSeries"
     >
     </ngx-charts-line-chart>
   </form>

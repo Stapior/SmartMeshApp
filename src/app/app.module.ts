@@ -22,6 +22,7 @@ import {AppBarComponent} from './app-bar/app-bar.component';
 import {LoginBarComponent} from './login/login-bar.component';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {NgxChartsModule} from '@swimlane/ngx-charts';
+import {MatFormFieldModule} from '@angular/material/form-field';
 
 
 @NgModule({
@@ -49,6 +50,7 @@ import {NgxChartsModule} from '@swimlane/ngx-charts';
     FormsModule,
     ReactiveFormsModule,
     FlexLayoutModule,
+    MatFormFieldModule,
     NgxChartsModule
   ],
   providers: [],

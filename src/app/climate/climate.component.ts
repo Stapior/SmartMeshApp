@@ -1,8 +1,8 @@
 import {AfterViewInit, Component, ViewChild} from '@angular/core';
 import {AngularFirestore} from '@angular/fire/firestore';
-import {combineLatest, from, Observable, Subject} from 'rxjs';
+import {combineLatest, Observable, Subject} from 'rxjs';
 import {MeshObject} from '../objects/object';
-import {map, switchMap} from 'rxjs/operators';
+import {map, switchMap, tap} from 'rxjs/operators';
 import {ObjectsStore} from '../objects/objects-store.service';
 import {NgModel} from '@angular/forms';
 
@@ -22,18 +22,14 @@ export class ClimateComponent implements AfterViewInit {
   colorScheme = {
     domain: ['#5AA454', '#E44D25', '#CFC0BB', '#7aa3e5', '#a8385d', '#aae3f5']
   };
-
-  multi: any[];
-  startDate: Date = this.getMinus7Days();
-  endDate: Date = new Date();
-
+  selectedDate: Date  = new Date();
+  chartSeries: any[];
   availableSensors$: Observable<MeshObject[]>;
   range: Subject<any> = new Subject<any>();
 
 
   @ViewChild('sensorInput') sensorInput: NgModel;
-  @ViewChild('startDateInput') startDateInput: NgModel;
-  @ViewChild('endDateInput') endDateInput: NgModel;
+  @ViewChild('selectedDateInput') selectedDateInput: NgModel;
 
   constructor(private firestore: AngularFirestore, private objectsStore: ObjectsStore) {
 
@@ -44,6 +40,7 @@ export class ClimateComponent implements AfterViewInit {
     date.setDate(date.getDate() - 5);
     return date;
   }
+
   get1Day(): Date {
     const date = new Date();
     date.setDate(date.getDate() + 3);
@@ -51,29 +48,36 @@ export class ClimateComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    const sensor$ = this.sensorInput.valueChanges;
-    const dateRange$ = combineLatest([this.startDateInput.valueChanges, this.endDateInput.valueChanges])
-      .pipe(map(([startDate, endDate]) => {
-      return {startDate, endDate};
-    }));
 
-    //this.endDate.setDate(this.startDate.getDate()+1);
-    combineLatest([sensor$, dateRange$]).pipe(switchMap(([sensor, range]) => {
-      return this.firestore.collection('objects/' + sensor.id + '/reads', ref => ref.where('time', '>', range.startDate)
-        .where('time', '<', range.endDate.setDate(this.startDate.getDate()+1))).snapshotChanges();
+    this.availableSensors$ = this.objectsStore.getAllObjects().pipe(map(objects => objects.filter(object => {
+        return object?.objectType?.endsWith('Sensor');
+      }
+    )));
+
+    const sensor$ = this.sensorInput.valueChanges;
+
+    const selectedDate$ = this.selectedDateInput.valueChanges;
+    selectedDate$.subscribe(value => {debugger})
+
+    combineLatest([sensor$, selectedDate$]).pipe(tap(([sensor, selectedDate]) => console.log('data', selectedDate)), switchMap(([sensor, selectedDate]) => {
+      return this.firestore.collection('objects/' + sensor.id + '/reads', ref => ref.where('time', '>', selectedDate)
+        .where('time', '<', this.getDatePlusDays(selectedDate, 1))).snapshotChanges();
     })).subscribe(value => {
       const map1 = value.map(e => {
         const data = e.payload.doc.data();
         // @ts-ignore
         return {name: data.time.toDate(), value: data.value};
       });
-      this.multi = [{name: 'czujnikTemp', series: map1}];
+      this.chartSeries = [{name: 'czujnikTemp', series: map1}];
     });
 
-    this.availableSensors$ = this.objectsStore.getAllObjects().pipe(map(objects => objects.filter(object => {
-        return object?.objectType?.endsWith('Sensor');
-      }
-    )));
+
+  }
+
+  private getDatePlusDays(selectedDate: Date, days: number): Date {
+    const date = new Date(selectedDate);
+    date.setDate(date.getDate() + days);
+    return date;
   }
 
 }
