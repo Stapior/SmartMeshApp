@@ -56,6 +56,12 @@ export class ReadsComponent implements AfterViewInit {
         return {startDate, endDate};
       }));
 
+  Date.prototype.getWeek = function() {
+    var onejan = new Date(this.getFullYear(),0,1);
+    var today = new Date(this.getFullYear(),this.getMonth(),this.getDate());
+    var dayOfYear = ((today - onejan + 86400000)/86400000);
+    return Math.ceil(dayOfYear/7)
+  };
 
     combineLatest([sensor$, dateRange$]).pipe(switchMap(([sensor, range]) => {
       return this.firestore.collection('objects/' + sensor.id + '/reads', ref => ref.where('time', '>', range.startDate)
@@ -85,24 +91,31 @@ export class ReadsComponent implements AfterViewInit {
       this.xAxisLabel = sensorData?.xLabel;
       this.yAxisLabel = sensorData?.yLabel;
 
+      //MONTH
       // this gives an object with dates as keys
-      const groups = sensorDataSeries.reduce((groupsTmp, values, {}) => {
+      const groupsMonth = sensorDataSeries.reduce((groupsTmp, values, {}) => {
         const month = values.name.getMonth();
-        if (!groupsTmp[month]) {
-          groupsTmp[month] = [];
+        const year = values.name.getFullYear();
+        const monthAndYear = String(month).concat("/",String(year));
+        if (!groupsTmp[monthAndYear]) {
+          groupsTmp[monthAndYear] = [];
         }
-        groupsTmp[month].push(values.value);
+        groupsTmp[monthAndYear].push(values.value);
         return groupsTmp;
       }, {});
 
       // Edit: to add it in the array format instead
-      const groupArrays = Object.keys(groups).map((month) => {
+      const valuesPerMonth = Object.keys(groupsMonth).map((monthAndYear) => {
         return {
-          month,
-          values: groups[month]
+          monthAndYear,
+          values: groupsMonth[monthAndYear],
+          minValue: Math.min.apply(Math, groupsMonth[monthAndYear]),
+          maxValue: Math.max.apply(Math, groupsMonth[monthAndYear]),
+          avgValue: (groupsMonth[monthAndYear].reduce((a, b) => a + b, 0) / groupsMonth[monthAndYear].length).toFixed(2)
         };
       });
-      console.log(groupArrays);
+      console.log(valuesPerMonth);
+
     });
 
     this.availableSensors$ = this.objectsStore.getAllObjects().pipe(map(objects => objects.filter(object => {
