@@ -8,7 +8,6 @@ import {NgModel} from '@angular/forms';
 import {SENSOR_TYPES} from './sensor-types';
 
 
-
 @Component({
   selector: 'app-reads',
   templateUrl: './reads.component.html',
@@ -57,6 +56,12 @@ export class ReadsComponent implements AfterViewInit {
         return {startDate, endDate};
       }));
 
+  Date.prototype.getWeek = function() {
+    var onejan = new Date(this.getFullYear(),0,1);
+    var today = new Date(this.getFullYear(),this.getMonth(),this.getDate());
+    var dayOfYear = ((today - onejan + 86400000)/86400000);
+    return Math.ceil(dayOfYear/7)
+  };
 
     combineLatest([sensor$, dateRange$]).pipe(switchMap(([sensor, range]) => {
       return this.firestore.collection('objects/' + sensor.id + '/reads', ref => ref.where('time', '>', range.startDate)
@@ -75,16 +80,92 @@ export class ReadsComponent implements AfterViewInit {
       const rawValues: number[] = value.values.map(e => {
         const data = e.payload.doc.data();
         // @ts-ignore
-        return  data.value;
+        return data.value;
       });
 
       this.maxValue = Math.max.apply(Math, rawValues);
-      this.minValue =  Math.min.apply(Math, rawValues);
+      this.minValue = Math.min.apply(Math, rawValues);
       this.averageValue = sum / value.values.length;
       this.chartsSeries = [{name: value.sensor.name, series: sensorDataSeries}];
       const sensorData = SENSOR_TYPES[value.sensor.objectType];
       this.xAxisLabel = sensorData?.xLabel;
       this.yAxisLabel = sensorData?.yLabel;
+
+      //MONTH
+      // this gives an object with dates as keys
+      const groupsMonth = sensorDataSeries.reduce((groupsTmp, values, {}) => {
+        const month = values.name.getMonth();
+        const year = values.name.getFullYear();
+        const monthAndYear = String(month).concat("/",String(year));
+        if (!groupsTmp[monthAndYear]) {
+          groupsTmp[monthAndYear] = [];
+        }
+        groupsTmp[monthAndYear].push(values.value);
+        return groupsTmp;
+      }, {});
+
+      // Edit: to add it in the array format instead
+      const valuesPerMonth = Object.keys(groupsMonth).map((monthAndYear) => {
+        return {
+          monthAndYear,
+          values: groupsMonth[monthAndYear],
+          minValue: Math.min.apply(Math, groupsMonth[monthAndYear]),
+          maxValue: Math.max.apply(Math, groupsMonth[monthAndYear]),
+          avgValue: (groupsMonth[monthAndYear].reduce((a, b) => a + b, 0) / groupsMonth[monthAndYear].length).toFixed(2)
+        };
+      });
+      console.log(valuesPerMonth);
+
+      //WEEK
+      // this gives an object with dates as keys
+      const groupsWeek = sensorDataSeries.reduce((groupsTmp, values, {}) => {
+        const week = values.name.getWeek();
+        const year = values.name.getFullYear();
+        const weekAndYear = String(week).concat("/",String(year));
+        if (!groupsTmp[weekAndYear]) {
+          groupsTmp[weekAndYear] = [];
+        }
+        groupsTmp[weekAndYear].push(values.value);
+        return groupsTmp;
+      }, {});
+
+      // Edit: to add it in the array format instead
+      const valuesPerWeek = Object.keys(groupsWeek).map((weekAndYear) => {
+        return {
+          weekAndYear,
+          values: groupsWeek[weekAndYear],
+          minValue: Math.min.apply(Math, groupsWeek[weekAndYear]),
+          maxValue: Math.max.apply(Math, groupsWeek[weekAndYear]),
+          avgValue: (groupsWeek[weekAndYear].reduce((a, b) => a + b, 0) / groupsWeek[weekAndYear].length).toFixed(2)
+        };
+      });
+      console.log(valuesPerWeek);
+
+      //DAYS
+      // this gives an object with dates as keys
+      const groupsDay = sensorDataSeries.reduce((groupsTmp, values, {}) => {
+        const day = values.name.getDate();
+        const month = values.name.getMonth();
+        const year = values.name.getFullYear();
+        const date = String(day).concat("/",String(month),"/",String(year));
+        if (!groupsTmp[date]) {
+          groupsTmp[date] = [];
+        }
+        groupsTmp[date].push(values.value);
+        return groupsTmp;
+      }, {});
+
+      // Edit: to add it in the array format instead
+      const valuesPerDay = Object.keys(groupsDay).map((date) => {
+        return {
+          date,
+          values: groupsDay[date],
+          minValue: Math.min.apply(Math, groupsDay[date]),
+          maxValue: Math.max.apply(Math, groupsDay[date]),
+          avgValue: (groupsDay[date].reduce((a, b) => a + b, 0) / groupsDay[date].length).toFixed(2)
+        };
+      });
+      console.log(valuesPerDay);
 
     });
 
