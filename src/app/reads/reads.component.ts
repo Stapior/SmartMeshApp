@@ -116,6 +116,57 @@ export class ReadsComponent implements AfterViewInit {
       });
       console.log(valuesPerMonth);
 
+      //WEEK
+      // this gives an object with dates as keys
+      const groupsWeek = sensorDataSeries.reduce((groupsTmp, values, {}) => {
+        const week = values.name.getWeek();
+        const year = values.name.getFullYear();
+        const weekAndYear = String(week).concat("/",String(year));
+        if (!groupsTmp[weekAndYear]) {
+          groupsTmp[weekAndYear] = [];
+        }
+        groupsTmp[weekAndYear].push(values.value);
+        return groupsTmp;
+      }, {});
+
+      // Edit: to add it in the array format instead
+      const valuesPerWeek = Object.keys(groupsWeek).map((weekAndYear) => {
+        return {
+          weekAndYear,
+          values: groupsWeek[weekAndYear],
+          minValue: Math.min.apply(Math, groupsWeek[weekAndYear]),
+          maxValue: Math.max.apply(Math, groupsWeek[weekAndYear]),
+          avgValue: (groupsWeek[weekAndYear].reduce((a, b) => a + b, 0) / groupsWeek[weekAndYear].length).toFixed(2)
+        };
+      });
+      console.log(valuesPerWeek);
+
+      //DAYS
+      // this gives an object with dates as keys
+      const groupsDay = sensorDataSeries.reduce((groupsTmp, values, {}) => {
+        const day = values.name.getDate();
+        const month = values.name.getMonth();
+        const year = values.name.getFullYear();
+        const date = String(day).concat("/",String(month),"/",String(year));
+        if (!groupsTmp[date]) {
+          groupsTmp[date] = [];
+        }
+        groupsTmp[date].push(values.value);
+        return groupsTmp;
+      }, {});
+
+      // Edit: to add it in the array format instead
+      const valuesPerDay = Object.keys(groupsDay).map((date) => {
+        return {
+          date,
+          values: groupsDay[date],
+          minValue: Math.min.apply(Math, groupsDay[date]),
+          maxValue: Math.max.apply(Math, groupsDay[date]),
+          avgValue: (groupsDay[date].reduce((a, b) => a + b, 0) / groupsDay[date].length).toFixed(2)
+        };
+      });
+      console.log(valuesPerDay);
+
     });
 
     this.availableSensors$ = this.objectsStore.getAllObjects().pipe(map(objects => objects.filter(object => {
