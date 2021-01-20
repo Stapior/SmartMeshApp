@@ -1,6 +1,6 @@
-<div  fxLayout="row" fxLayoutAlign="center center">
+<div fxLayout="row" fxLayoutAlign="center center">
 
-  <form class="example-form" #readsFrom="ngForm" >
+  <form class="example-form" #readsFrom="ngForm">
     <mat-form-field>
       <mat-select [placeholder]="'Select a sensor'" required name="sensorSelect" ngModel #sensorInput="ngModel">
         <mat-option *ngFor="let sensor of availableSensors$ | async" [value]="sensor">
@@ -18,20 +18,38 @@
       <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-date-range-picker #picker></mat-date-range-picker>
     </mat-form-field>
-    <ngx-charts-line-chart
-      [view]="view"
-      [scheme]="colorScheme"
-      [legend]="true"
-      [showXAxisLabel]="true"
-      [showYAxisLabel]="true"
-      [xAxis]="true"
-      [yAxis]="true"
-      [xAxisLabel]="xAxisLabel"
-      [yAxisLabel]="yAxisLabel"
-      [timeline]="timeline"
-      [results]="chartsSeries"
-    >
-    </ngx-charts-line-chart>
+    <div>
+      <ngx-charts-line-chart
+        [view]="view"
+        [scheme]="colorScheme"
+        [legend]="true"
+        [showXAxisLabel]="true"
+        [showYAxisLabel]="true"
+        [xAxis]="true"
+        [yAxis]="true"
+        [xAxisLabel]="xAxisLabel"
+        [yAxisLabel]="yAxisLabel"
+        [timeline]="timeline"
+        [results]="chartsSeries"
+      >
+      </ngx-charts-line-chart>
+    </div>
+    <div>
+      <ngx-charts-line-chart
+        [view]="view"
+        [scheme]="colorScheme"
+        [legend]="true"
+        [showXAxisLabel]="true"
+        [showYAxisLabel]="true"
+        [xAxis]="true"
+        [yAxis]="true"
+        [xAxisLabel]="xAxisLabel"
+        [yAxisLabel]="yAxisLabel"
+        [timeline]="timeline"
+        [results]="secondChartsSeries"
+      >
+      </ngx-charts-line-chart>
+    </div>
     <ng-container *ngIf="averageValue">
       Average value: {{averageValue}}
       Min value: {{minValue}}

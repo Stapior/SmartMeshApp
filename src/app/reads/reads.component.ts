@@ -39,6 +39,7 @@ export class ReadsComponent implements AfterViewInit {
   @ViewChild('sensorInput') sensorInput: NgModel;
   @ViewChild('startDateInput') startDateInput: NgModel;
   @ViewChild('endDateInput') endDateInput: NgModel;
+  secondChartsSeries: any[];
 
   constructor(private firestore: AngularFirestore, private objectsStore: ObjectsStore) {
 
