@@ -41,7 +41,6 @@ export class ClimateComponent implements AfterViewInit {
   availableSensors$: Observable<MeshObject[]>;
   selectedHumSensor: MeshObject;
   selectedTempSensor: MeshObject;
-  availableSensors$: Observable<MeshObject[]>;
   range: Subject<any> = new Subject<any>();
 
 

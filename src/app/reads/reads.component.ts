@@ -1,12 +1,12 @@
 import {AfterViewInit, Component, ViewChild} from '@angular/core';
-import {AngularFirestore} from '@angular/fire/firestore';
-import {combineLatest, Observable, Subject} from 'rxjs';
+import {AngularFirestore, DocumentChangeAction} from '@angular/fire/firestore';
+import {combineLatest, Observable, ObservedValueOf, Subject} from 'rxjs';
 import {MeshObject} from '../objects/object';
 import {map, switchMap} from 'rxjs/operators';
 import {ObjectsStore} from '../objects/objects-store.service';
 import {NgModel} from '@angular/forms';
 import {SENSOR_TYPES} from './sensor-types';
-
+import * as FileSaver from 'file-saver';
 
 @Component({
   selector: 'app-reads',
@@ -19,6 +19,7 @@ export class ReadsComponent implements AfterViewInit {
   xAxisLabel = 'X';
   yAxisLabel = 'Y';
   timeline = true;
+  dataToExport: unknown;
   averageValue;
   maxValue;
   minValue;
@@ -56,12 +57,6 @@ export class ReadsComponent implements AfterViewInit {
         return {startDate, endDate};
       }));
 
-  Date.prototype.getWeek = function() {
-    var onejan = new Date(this.getFullYear(),0,1);
-    var today = new Date(this.getFullYear(),this.getMonth(),this.getDate());
-    var dayOfYear = ((today - onejan + 86400000)/86400000);
-    return Math.ceil(dayOfYear/7)
-  };
 
     combineLatest([sensor$, dateRange$]).pipe(switchMap(([sensor, range]) => {
       return this.firestore.collection('objects/' + sensor.id + '/reads', ref => ref.where('time', '>', range.startDate)
@@ -77,26 +72,26 @@ export class ReadsComponent implements AfterViewInit {
         return {name: data.time.toDate(), value: data.value};
       });
 
-      const rawValues: number[] = value.values.map(e => {
+      const dataValues = value.values.map(e => {
         const data = e.payload.doc.data();
         // @ts-ignore
-        return data.value;
+        return {time: data.time.toDate(), value: data.value};
       });
 
-      this.maxValue = Math.max.apply(Math, rawValues);
-      this.minValue = Math.min.apply(Math, rawValues);
-      this.averageValue = sum / value.values.length;
-      this.chartsSeries = [{name: value.sensor.name, series: sensorDataSeries}];
-      const sensorData = SENSOR_TYPES[value.sensor.objectType];
-      this.xAxisLabel = sensorData?.xLabel;
-      this.yAxisLabel = sensorData?.yLabel;
+      this.dataToExport = {
+        sensorName: value.sensor.name,
+        data: dataValues
+      };
+
+      this.computeStatistics(value, sum);
+      this.setMainChartConfig(value, sensorDataSeries);
 
       //MONTH
       // this gives an object with dates as keys
       const groupsMonth = sensorDataSeries.reduce((groupsTmp, values, {}) => {
         const month = values.name.getMonth();
         const year = values.name.getFullYear();
-        const monthAndYear = String(month).concat("/",String(year));
+        const monthAndYear = String(month).concat('/', String(year));
         if (!groupsTmp[monthAndYear]) {
           groupsTmp[monthAndYear] = [];
         }
@@ -119,9 +114,9 @@ export class ReadsComponent implements AfterViewInit {
       //WEEK
       // this gives an object with dates as keys
       const groupsWeek = sensorDataSeries.reduce((groupsTmp, values, {}) => {
-        const week = values.name.getWeek();
+        const week = this.getWeek(values.name);
         const year = values.name.getFullYear();
-        const weekAndYear = String(week).concat("/",String(year));
+        const weekAndYear = String(week).concat('/', String(year));
         if (!groupsTmp[weekAndYear]) {
           groupsTmp[weekAndYear] = [];
         }
@@ -147,7 +142,7 @@ export class ReadsComponent implements AfterViewInit {
         const day = values.name.getDate();
         const month = values.name.getMonth();
         const year = values.name.getFullYear();
-        const date = String(day).concat("/",String(month),"/",String(year));
+        const date = String(day).concat('/', String(month), '/', String(year));
         if (!groupsTmp[date]) {
           groupsTmp[date] = [];
         }
@@ -175,4 +170,34 @@ export class ReadsComponent implements AfterViewInit {
     )));
   }
 
+  private computeStatistics(value: ObservedValueOf<Observable<{ values: DocumentChangeAction<unknown>[]; range: ObservedValueOf<Observable<{ endDate: any; startDate: any }>>; sensor: MeshObject }>>, sum: number) {
+    const rawValues: number[] = value.values.map(e => {
+      const data = e.payload.doc.data();
+      // @ts-ignore
+      return data.value;
+    });
+
+    this.maxValue = Math.max.apply(Math, rawValues);
+    this.minValue = Math.min.apply(Math, rawValues);
+    this.averageValue = sum / value.values.length;
+  }
+
+  private setMainChartConfig(value: ObservedValueOf<Observable<{ values: DocumentChangeAction<unknown>[]; range: ObservedValueOf<Observable<{ endDate: any; startDate: any }>>; sensor: MeshObject }>>, sensorDataSeries: { name: Date; value: any }[]): void {
+    this.chartsSeries = [{name: value.sensor.name, series: sensorDataSeries}];
+    const sensorData = SENSOR_TYPES[value.sensor.objectType];
+    this.xAxisLabel = sensorData?.xLabel;
+    this.yAxisLabel = sensorData?.yLabel;
+  }
+
+  getWeek(date: Date): number {
+    const onejan = new Date(date.getFullYear(), 0, 1);
+    const today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    const dayOfYear = ((today.getTime() - onejan.getTime() + 86400000) / 86400000);
+    return Math.ceil(dayOfYear / 7);
+  };
+
+  export(): void {
+    const blob = new Blob([JSON.stringify(this.dataToExport)], {type: 'text/plain;charset=utf-8'});
+    FileSaver.saveAs(blob, 'sensorData.json');
+  }
 }

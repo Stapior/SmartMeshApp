@@ -26,6 +26,7 @@
     "@swimlane/ngx-charts": "^16.0.0",
     "angular-ts-math": "^1.0.7",
     "angular5-time-picker": "^1.0.8",
+    "file-saver": "^2.0.5",
     "firebase": "^8.0.0",
     "ngx-material-timepicker": "^5.5.3",
     "rxjs": "~6.6.0",
