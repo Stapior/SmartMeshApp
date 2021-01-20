@@ -23,6 +23,8 @@ import {LoginBarComponent} from './login/login-bar.component';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {NgxChartsModule} from '@swimlane/ngx-charts';
 import {MatFormFieldModule} from '@angular/material/form-field';
+import {NgxMaterialTimepickerModule} from 'ngx-material-timepicker';
+
 
 
 @NgModule({
@@ -51,7 +53,9 @@ import {MatFormFieldModule} from '@angular/material/form-field';
     ReactiveFormsModule,
     FlexLayoutModule,
     MatFormFieldModule,
+    NgxMaterialTimepickerModule,
     NgxChartsModule
+    
   ],
   providers: [],
   bootstrap: [AppComponent]

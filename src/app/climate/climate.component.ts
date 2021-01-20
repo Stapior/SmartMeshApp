@@ -6,6 +6,7 @@ import {map, switchMap, tap} from 'rxjs/operators';
 import {ObjectsStore} from '../objects/objects-store.service';
 import {NgForm, NgModel} from '@angular/forms';
 import {angularMath} from 'angular-ts-math';
+import {NgxMaterialTimepickerModule} from 'ngx-material-timepicker';
 
 @Component({
   selector: 'app-climate',
@@ -14,6 +15,10 @@ import {angularMath} from 'angular-ts-math';
 })
 
 export class ClimateComponent implements AfterViewInit {
+
+  // this shows up as default time.
+  getTime = '00:00'
+
   view: any[] = [500, 200];
   xAxisLabel = 'Time';
   yAxisLabel = 'Temperature';
@@ -36,14 +41,14 @@ export class ClimateComponent implements AfterViewInit {
   chartsSeriesHum: any[];
   availableSensors$: Observable<MeshObject[]>;
   range: Subject<any> = new Subject<any>();
-  meta: number;
+
 
   tempHumiditySensors$: Observable<MeshObject[]>;
   @ViewChild('sensorInput') sensorInput: NgModel;
   @ViewChild('selectedDateInput') selectedDateInput: NgModel;
   @ViewChild('climateForm') form: NgForm;
-  myTime: any;
-
+  @ViewChild('getTimeForm') getTimeForm: NgForm;
+  
 
   constructor(private firestore: AngularFirestore, private objectsStore: ObjectsStore) {
 
@@ -52,6 +57,7 @@ export class ClimateComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
 
+    
 
     this.availableSensors$ = this.objectsStore.getAllObjects().pipe(map(objects => objects.filter(object => {
         return object?.objectType?.endsWith('Sensor');
@@ -78,18 +84,43 @@ export class ClimateComponent implements AfterViewInit {
       if (value) {
         let sum = 0;
         let classifiedRecordsLength = 0;
+        let diffMinuGetTime = 0;
         const sensorDataSeries = value.map(e => {
           const data = e.payload.doc.data();
           const date = data.time.toDate();
 
+          //console.log('timeTesting: ', this.myTime);
+          const hoursgetTime = parseInt(this.getTime.split(":")[0]);
+          const minuGetTime = parseInt(this.getTime.split(":")[1]);
+          //console.log('timeTesting  hours: ', hoursgetTime);
+          //console.log('timeTesting  min: ', minuGetTime);
+          diffMinuGetTime = minuGetTime - 45;
+          const onePlushoursgetTime = hoursgetTime+1;
+          console.log('timeTesting : ', diffMinuGetTime);
           // średnia z 17:45 - 18:00
-          if (date.getHours() === 17 && date.getMinutes() >= 45) {
-            sum += data.value;
-            console.log('godz', date.getHours(), 'minutes', date.getMinutes(), 'suma ', sum);
-            classifiedRecordsLength += 1;
-            return {name: date, value: data.value};
-          }
+          
 
+            if (diffMinuGetTime < 0 && date.getHours() === hoursgetTime && date.getMinutes() >= minuGetTime && date.getMinutes() < minuGetTime+15) {
+              sum += data.value;
+              console.log('godz', date.getHours(), 'minutes', date.getMinutes(), 'suma ', sum);
+              classifiedRecordsLength += 1;
+              return { name: date, value: data.value };
+            }
+            else if (diffMinuGetTime >= 0){
+              if (date.getHours() === hoursgetTime && date.getMinutes() >= minuGetTime){
+                sum += data.value;
+                console.log('godz', date.getHours(), 'minutes', date.getMinutes(), 'suma ', sum);
+                classifiedRecordsLength += 1;
+                return { name: date, value: data.value };
+              }
+              if (date.getHours() === onePlushoursgetTime  && date.getMinutes() < diffMinuGetTime){
+                sum += data.value;
+                console.log('godz', date.getHours(), 'minutes', date.getMinutes(), 'suma ', sum);
+                classifiedRecordsLength += 1;
+                return { name: date, value: data.value };
+              }
+
+            }
           return null;
         }).filter(x => !!x);
         console.log('cos ssss', this.sensorInput);
@@ -108,14 +139,24 @@ export class ClimateComponent implements AfterViewInit {
         this.chartsSeriesHum = [];
       }
       this.computeClimateComfort();
+
+      this.getTimeTest();
     });
 
+    
+    this.getTimeForm.valueChanges.subscribe(value => {
+      this.getTimeTest();
+    });
 
     this.form.valueChanges.subscribe(value => {
       this.computeClimateComfort();
     });
 
   }
+
+  private getTimeTest(): void {
+  }
+
 
   private computeClimateComfort(): void {
     this.tr = this.averageValueTemp;
