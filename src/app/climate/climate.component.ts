@@ -1,12 +1,11 @@
-import {AfterViewInit, Component, OnChanges, SimpleChanges, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ViewChild} from '@angular/core';
 import {AngularFirestore} from '@angular/fire/firestore';
 import {combineLatest, Observable, of, Subject} from 'rxjs';
 import {MeshObject} from '../objects/object';
-import {map, switchMap, tap} from 'rxjs/operators';
+import {delay, map, switchMap, throttleTime} from 'rxjs/operators';
 import {ObjectsStore} from '../objects/objects-store.service';
 import {NgForm, NgModel} from '@angular/forms';
 import {angularMath} from 'angular-ts-math';
-import {NgxMaterialTimepickerModule} from 'ngx-material-timepicker';
 
 @Component({
   selector: 'app-climate',
@@ -17,7 +16,7 @@ import {NgxMaterialTimepickerModule} from 'ngx-material-timepicker';
 export class ClimateComponent implements AfterViewInit {
 
   // this shows up as default time.
-  getTime = '00:00'
+  getTime = '00:00';
 
   view: any[] = [500, 200];
   xAxisLabel = 'Time';
@@ -40,15 +39,19 @@ export class ClimateComponent implements AfterViewInit {
   chartsSeriesTemp: any[];
   chartsSeriesHum: any[];
   availableSensors$: Observable<MeshObject[]>;
+  selectedHumSensor: MeshObject;
+  selectedTempSensor: MeshObject;
+  availableSensors$: Observable<MeshObject[]>;
   range: Subject<any> = new Subject<any>();
 
 
-  tempHumiditySensors$: Observable<MeshObject[]>;
-  @ViewChild('sensorInput') sensorInput: NgModel;
+  tempSensors$: Observable<MeshObject[]>;
+  humiditySensors$: Observable<MeshObject[]>;
+  @ViewChild('tempSensorInput') tempSensorInput: NgModel;
+  @ViewChild('humSensorInput') humSensorInput: NgModel;
   @ViewChild('selectedDateInput') selectedDateInput: NgModel;
   @ViewChild('climateForm') form: NgForm;
-  @ViewChild('getTimeForm') getTimeForm: NgForm;
-  
+  @ViewChild('timeInput') timeInput: NgModel;
 
   constructor(private firestore: AngularFirestore, private objectsStore: ObjectsStore) {
 
@@ -57,106 +60,102 @@ export class ClimateComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
 
-    
 
     this.availableSensors$ = this.objectsStore.getAllObjects().pipe(map(objects => objects.filter(object => {
         return object?.objectType?.endsWith('Sensor');
       }
     )));
 
-    this.tempHumiditySensors$ = this.availableSensors$.pipe(map(sensors => sensors.filter(value => {
-        return value?.objectType?.endsWith('tempSensor') || value?.objectType?.endsWith('humiditySensor');
+    this.tempSensors$ = this.availableSensors$.pipe(map(sensors => sensors.filter(value =>
+      value?.objectType?.endsWith('tempSensor'))));
+
+    this.humiditySensors$ = this.availableSensors$.pipe(map(sensors => sensors
+      .filter(value => value?.objectType?.endsWith('humiditySensor')
+      )));
+
+    this.humiditySensors$.subscribe(sensors => {
+      if (sensors.length && !this.selectedHumSensor) {
+        this.selectedHumSensor = sensors[0];
       }
-    )));
+    });
 
-    const sensor$ = this.sensorInput.valueChanges;
-    const selectedDate$ = this.selectedDateInput.valueChanges;
+    this.tempSensors$.subscribe(sensors => {
+      if (sensors.length && !this.selectedTempSensor) {
+        this.selectedTempSensor = sensors[0];
+      }
+    });
 
+    const tempSensor$ = this.tempSensorInput.valueChanges;
+    const humSensor$ = this.humSensorInput.valueChanges;
+    const time$ = this.timeInput.valueChanges;
+    const selectedDate$: Observable<Date> = this.selectedDateInput.valueChanges;
 
-    combineLatest([sensor$, selectedDate$]).pipe(tap(([sensor, selectedDate]) => console.log('data', selectedDate, 'sensor', sensor)),
-      switchMap(([sensor, selectedDate]) => {
-        if (sensor && selectedDate) {
-          return this.firestore.collection('objects/' + sensor.id + '/reads', ref => ref.where('time', '>', selectedDate)
+    const tempValues$ = combineLatest([tempSensor$, selectedDate$]).pipe(
+      switchMap(([tempSensor, selectedDate]) => {
+        if (tempSensor && selectedDate) {
+          return this.firestore.collection('objects/' + tempSensor.id + '/reads', ref => ref.where('time', '>', selectedDate)
             .where('time', '<', this.getDatePlusDays(selectedDate, 1))).snapshotChanges();
         }
         return of(null);
-      })).subscribe(value => {
-      if (value) {
-        let sum = 0;
-        let classifiedRecordsLength = 0;
-        let diffMinuGetTime = 0;
-        const sensorDataSeries = value.map(e => {
-          const data = e.payload.doc.data();
-          const date = data.time.toDate();
+      })
+    );
 
-          //console.log('timeTesting: ', this.myTime);
-          const hoursgetTime = parseInt(this.getTime.split(":")[0]);
-          const minuGetTime = parseInt(this.getTime.split(":")[1]);
-          //console.log('timeTesting  hours: ', hoursgetTime);
-          //console.log('timeTesting  min: ', minuGetTime);
-          diffMinuGetTime = minuGetTime - 45;
-          const onePlushoursgetTime = hoursgetTime+1;
-          console.log('timeTesting : ', diffMinuGetTime);
-          // średnia z 17:45 - 18:00
-          
-
-            if (diffMinuGetTime < 0 && date.getHours() === hoursgetTime && date.getMinutes() >= minuGetTime && date.getMinutes() < minuGetTime+15) {
-              sum += data.value;
-              console.log('godz', date.getHours(), 'minutes', date.getMinutes(), 'suma ', sum);
-              classifiedRecordsLength += 1;
-              return { name: date, value: data.value };
-            }
-            else if (diffMinuGetTime >= 0){
-              if (date.getHours() === hoursgetTime && date.getMinutes() >= minuGetTime){
-                sum += data.value;
-                console.log('godz', date.getHours(), 'minutes', date.getMinutes(), 'suma ', sum);
-                classifiedRecordsLength += 1;
-                return { name: date, value: data.value };
-              }
-              if (date.getHours() === onePlushoursgetTime  && date.getMinutes() < diffMinuGetTime){
-                sum += data.value;
-                console.log('godz', date.getHours(), 'minutes', date.getMinutes(), 'suma ', sum);
-                classifiedRecordsLength += 1;
-                return { name: date, value: data.value };
-              }
-
-            }
-          return null;
-        }).filter(x => !!x);
-        console.log('cos ssss', this.sensorInput);
-        if (this.sensorInput.viewModel.name === 'Temperature sensor') {
-          this.averageValueTemp = sum / classifiedRecordsLength;
-          this.chartsSeriesTemp = [{name: 'Temperature sensor', series: sensorDataSeries}];
+    const humValues$ = combineLatest([humSensor$, selectedDate$]).pipe(
+      switchMap(([tempSensor, selectedDate]) => {
+        if (tempSensor && selectedDate) {
+          return this.firestore.collection('objects/' + tempSensor.id + '/reads', ref => ref.where('time', '>', selectedDate)
+            .where('time', '<', this.getDatePlusDays(selectedDate, 1))).snapshotChanges();
         }
+        return of(null);
+      })
+    );
 
-        if (this.sensorInput.viewModel.name === 'Humidity sensor') {
-          this.averageValueHum = sum / classifiedRecordsLength;
-          this.chartsSeriesHum = [{name: 'Humidity sensor', series: sensorDataSeries}];
-        }
-
+    combineLatest([humValues$, selectedDate$, time$]).subscribe(([values, day, time]) => {
+      if (values && day && time) {
+        const sensorDataSeries = this.getSensorDataSeries(day, values);
+        const sum = sensorDataSeries.map(value => value.value).reduce((a, b) => a + b, 0);
+        this.averageValueHum = sum / sensorDataSeries.length;
+        this.chartsSeriesHum = [{name: 'Humidity sensor', series: sensorDataSeries}];
       } else {
-        this.chartsSeriesTemp = [];
         this.chartsSeriesHum = [];
       }
       this.computeClimateComfort();
-
-      this.getTimeTest();
     });
 
-    
-    this.getTimeForm.valueChanges.subscribe(value => {
-      this.getTimeTest();
+    combineLatest([tempValues$, selectedDate$, time$]).subscribe(([values, day, time]) => {
+      if (values && day && time) {
+        const sensorDataSeries = this.getSensorDataSeries(day, values);
+        const sum = sensorDataSeries.map(value => value.value).reduce((a, b) => a + b, 0);
+        this.averageValueTemp = sum / sensorDataSeries.length;
+        this.chartsSeriesTemp = [{name: 'Temperature sensor', series: sensorDataSeries}];
+      } else {
+        this.chartsSeriesTemp = [];
+      }
+      this.computeClimateComfort();
     });
 
-    this.form.valueChanges.subscribe(value => {
+    this.form.valueChanges.pipe(throttleTime(100), delay(200)).subscribe(value => {
       this.computeClimateComfort();
     });
 
   }
 
-  private getTimeTest(): void {
+  private getSensorDataSeries(day: Date, values): { name: Date, value: number }[] {
+    const hours = parseInt(this.getTime.split(':')[0], 10);
+    const minutes = parseInt(this.getTime.split(':')[1], 10);
+    day.setHours(hours);
+    day.setMinutes(minutes);
+    const startDate = day;
+    const endDate = new Date(day.getTime() + 15 * 60 * 1000);
+    return values.map(e => {
+      const data = e.payload.doc.data();
+      const date = data.time.toDate();
+      if (date >= startDate && date < endDate) {
+        return {name: date, value: data.value};
+      }
+      return null;
+    }).filter(x => !!x);
   }
-
 
   private computeClimateComfort(): void {
     this.tr = this.averageValueTemp;
@@ -226,7 +225,6 @@ export class ClimateComponent implements AfterViewInit {
     date.setDate(date.getDate() + days);
     return date;
   }
-
 
 
 }
