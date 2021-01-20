@@ -55,12 +55,12 @@
       <mat-label>Metabolizm [met]</mat-label>
       <input matInput type="number" name="Meta" #MetaInput="ngModel" [(ngModel)]="meta" [matAutocomplete]="autoMeta">
       <mat-autocomplete #autoMeta="matAutocomplete">
-        <mat-option value=0.8>Wypoczynek w pozycji półleżącej = 0.8 met</mat-option>
-        <mat-option value=1>Wypoczynek w pozycji siedzącej = 1.0 met</mat-option>
-        <mat-option value=1.2>Praca w pozycji siedzącej = 1.2 met</mat-option>
-        <mat-option value=1.6>Praca lekka w pozcyji stojącej = 1.6 met</mat-option>
-        <mat-option value=2.0>Praca średnia w pozcyji stojącej = 2.0 met</mat-option>
-        <mat-option value=3.0>Praca ciężka w pozcyji stojącej = 3.0 met</mat-option>
+        <mat-option [value]="0.8">Wypoczynek w pozycji półleżącej = 0.8 met</mat-option>
+        <mat-option [value]="1">Wypoczynek w pozycji siedzącej = 1.0 met</mat-option>
+        <mat-option [value]="1.2">Praca w pozycji siedzącej = 1.2 met</mat-option>
+        <mat-option [value]="1.6">Praca lekka w pozcyji stojącej = 1.6 met</mat-option>
+        <mat-option [value]="2.0">Praca średnia w pozcyji stojącej = 2.0 met</mat-option>
+        <mat-option [value]="3.0">Praca ciężka w pozcyji stojącej = 3.0 met</mat-option>
       </mat-autocomplete>
     </mat-form-field>
 
