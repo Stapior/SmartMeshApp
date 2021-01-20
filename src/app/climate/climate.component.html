@@ -1,35 +1,122 @@
 <div fxLayout="row" fxLayoutAlign="center center">
 
-  <form class="example-form" #climateForm="ngForm">
-    <mat-form-field>
-      <mat-select [placeholder]="'Select a sensor'" required name="sensorSelect" ngModel #sensorInput="ngModel">
-        <mat-option *ngFor="let sensor of availableSensors$ | async" [value]="sensor">
-          {{ sensor.name }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
 
-    <mat-form-field >
-      <input  matInput [matDatepicker]="selectedDateDatePicker" placeholder="Select date to compute climate comfort"
-             name="selectedDate" #selectedDateInput="ngModel" [(ngModel)]="selectedDate">
+  <form class="example-form" #climateForm="ngForm">
+
+
+    <mat-button-toggle-group name="sens" aria-label="Font Style" required name="sensorSelect" ngModel
+      #sensorInput="ngModel">
+      <mat-button-toggle *ngFor="let sensor of temp_humidity_Sensor$ | async" [value]="sensor">{{sensor.name}}
+      </mat-button-toggle>
+    </mat-button-toggle-group>
+
+
+    <mat-form-field>
+      <input matInput [matDatepicker]="selectedDateDatePicker" placeholder="Select date to compute climate comfort"
+        name="selectedDate" #selectedDateInput="ngModel" [(ngModel)]="selectedDate">
       <mat-datepicker-toggle [for]="selectedDateDatePicker"></mat-datepicker-toggle>
       <mat-datepicker #selectedDateDatePicker></mat-datepicker>
     </mat-form-field>
 
-    <ngx-charts-line-chart
-      [view]="view"
-      [scheme]="colorScheme"
-      [legend]="true"
-      [showXAxisLabel]="true"
-      [showYAxisLabel]="true"
-      [xAxis]="true"
-      [yAxis]="true"
-      [xAxisLabel]="xAxisLabel"
-      [yAxisLabel]="yAxisLabel"
-      [timeline]="timeline"
-      [results]="chartSeries"
-    >
+      <label for="exampleInput">Wybierz początek 15-minutowego pomiaru</label>
+      <input type="time" id="exampleInput" name="input" ng-model="Mytime" placeholder="HH:mm:ss" required />
+      <div role="alert">
+        <span class="error" ng-show="myForm.input.$error.required">
+        </span>
+        <span class="error" ng-show="myForm.input.$error.time">
+        </span>
+      </div>
+
+
+    <ngx-charts-line-chart [view]="view" [scheme]="colorScheme" [legend]="true" [showXAxisLabel]="true"
+      [showYAxisLabel]="true" [xAxis]="true" [yAxis]="true" [xAxisLabel]="xAxisLabel" [yAxisLabel]="yAxisLabel"
+      [results]="chartsSeriesTemp">
     </ngx-charts-line-chart>
+
+    <ngx-charts-line-chart [view]="view" [scheme]="colorScheme" [legend]="true" [showXAxisLabel]="true"
+      [showYAxisLabel]="true" [xAxis]="true" [yAxis]="true" [xAxisLabel]="xAxisLabel" [yAxisLabel]="yAxisLabel"
+      [results]="chartsSeriesHum">
+    </ngx-charts-line-chart>
+
+
+    <mat-form-field>
+      <mat-label>Avarage value for temperature sensor [C] </mat-label>
+      <input matInput type="number" value={{averageValueTemp}}>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Avarage value for humidity sensor [%] </mat-label>
+      <input matInput type="number" value={{averageValueHum}}>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Metabolizm [met] </mat-label>
+      <input matInput type="number"  name="Meta" #MetaInput="ngModel" [(ngModel)]="Meta">
+
+    </mat-form-field>
+
+
+
+    
+    <mat-form-field >
+      <mat-label>Metabolizm </mat-label>
+      <mat-select name = "meta">
+        <mat-option value=0.8>Wypoczynek w pozycji półleżącej = 0.8 met</mat-option>
+        <mat-option value=1>Wypoczynek w pozycji siedzącej = 1.0 met</mat-option>
+        <mat-option value=1.2>Praca w pozycji siedzącej = 1.2 met</mat-option>
+        <mat-option value=1.6>Praca lekka w pozcyji stojącej = 1.6 met</mat-option>
+        <mat-option value=2.0>Praca średnia w pozcyji stojącej = 2.0 met</mat-option>
+        <mat-option value=3.0>Praca ciężka w pozcyji stojącej = 3.0 met</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Praca [W/m^2] </mat-label>
+      <input matInput type="number" value={{W}}>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Opór cieplny odzieży [clo] </mat-label>
+      <input matInput type="number" value={{Icl}}>
+    </mat-form-field>
+
+
+    <mat-form-field >
+      <mat-label>Opór cieplny odzieży</mat-label>
+      <mat-select name = "odziez">
+        <mat-option value=0.3>Typowy zestaw odzieży tropikalnej = 0.3 clo</mat-option>
+        <mat-option value=0.5>Lekka odzież letnia = 0.5 clo</mat-option>
+        <mat-option value=0.7>Lekka odzież robocza = 0.7 clo</mat-option>
+        <mat-option value=1.0>Zestaw typowej odzieży zimowej noszonej w domu = 1.0 clo</mat-option>
+        <mat-option value=1.5>Tradycyjna odzież europejska = 1.5 clo</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+
+
+    <mat-form-field>
+      <mat-label>Średnia temperatura promieniowania [C]</mat-label>
+      <input matInput type="number" value={{tr}}>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Względna prędkość przepływu powietrza [m/s] </mat-label>
+      <input matInput type="number" value={{v_ar}}>
+    </mat-form-field>
+
+
+
+
+    <mat-form-field>
+      <mat-label>PMV</mat-label>
+      <input matInput type="number" [readonly]="true" value={{PMV}}>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>PPD [%]</mat-label>
+      <input matInput type="number" [readonly]="true" value={{PPD}}>
+    </mat-form-field>
+
   </form>
 
 </div>
