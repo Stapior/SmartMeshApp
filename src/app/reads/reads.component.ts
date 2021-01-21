@@ -29,6 +29,7 @@ export class ReadsComponent implements AfterViewInit {
   };
 
   chartsSeries: any[];
+  secondChartsSeries: any[];
   startDate: Date = this.getMinus7Days();
   endDate: Date = new Date();
 
@@ -39,7 +40,6 @@ export class ReadsComponent implements AfterViewInit {
   @ViewChild('sensorInput') sensorInput: NgModel;
   @ViewChild('startDateInput') startDateInput: NgModel;
   @ViewChild('endDateInput') endDateInput: NgModel;
-  secondChartsSeries: any[];
 
   constructor(private firestore: AngularFirestore, private objectsStore: ObjectsStore) {
 
@@ -129,31 +129,44 @@ export class ReadsComponent implements AfterViewInit {
 
       // DAYS
       // this gives an object with dates as keys
-      const groupsDay = sensorDataSeries.reduce((groupsTmp, values, {}) => {
+        const groupsDay = sensorDataSeries.reduce((groupsTmp, values, {}) => {
         const day = values.name.getDate();
         const month = values.name.getMonth();
         const year = values.name.getFullYear();
-        const date = String(day).concat('/', String(month), '/', String(year));
+        const date: string = String(day).concat('/', String(month), '/', String(year));
         if (!groupsTmp[date]) {
           groupsTmp[date] = [];
         }
-        groupsTmp[date].push(values.value);
+        groupsTmp[date].push(values);
         return groupsTmp;
       }, {});
 
       // Edit: to add it in the array format instead
+      let minGroupedSeries = [];
+      let maxGroupedSeries = [];
+      let avgGroupedSeries = [];
       const valuesPerDay = Object.keys(groupsDay).map((date) => {
-        return {
-          date,
-          values: groupsDay[date],
-          minValue: Math.min.apply(Math, groupsDay[date]),
-          maxValue: Math.max.apply(Math, groupsDay[date]),
-          avgValue: (groupsDay[date].reduce((a, b) => a + b, 0) / groupsDay[date].length).toFixed(2)
-        };
-      });
-      console.log(valuesPerDay);
+        const minValue = Math.min.apply(Math, groupsDay[date].map(v => v.value));
+        const maxValue = Math.max.apply(Math, groupsDay[date].map(v => v.value));
+        const avgValue = (groupsDay[date].map(v => v.value).reduce((a, b) => a + b, 0) / groupsDay[date].length).toFixed(2);
+        minGroupedSeries = minGroupedSeries.concat(groupsDay[date].map(v => {
+          return {...v, value: minValue};
+        }));
 
+        maxGroupedSeries = maxGroupedSeries.concat(groupsDay[date].map(v => {
+          return {...v, value: maxValue};
+        }));
+
+        avgGroupedSeries = avgGroupedSeries.concat(groupsDay[date].map(v => {
+          return {...v, value: avgValue};
+        }));
+      });
+      this.secondChartsSeries.push({name: 'minPerDay', series: minGroupedSeries});
+      this.secondChartsSeries.push({name: 'maxPerDay', series: maxGroupedSeries});
+      this.secondChartsSeries.push({name: 'avgPerDay', series: avgGroupedSeries});
+      console.log(valuesPerDay);
     });
+
 
     this.availableSensors$ = this.objectsStore.getAllObjects().pipe(map(objects => objects.filter(object => {
         return object?.objectType?.endsWith('Sensor');
@@ -192,6 +205,13 @@ export class ReadsComponent implements AfterViewInit {
     this.xAxisLabel = sensorData?.xLabel;
     this.yAxisLabel = sensorData?.yLabel;
   }
+
+  /*private setSecondChartConfig(value: ObservedValueOf<Observable<{ values: DocumentChangeAction<unknown>[]; range: ObservedValueOf<Observable<{ endDate: any; startDate: any }>>; sensor: MeshObject }>>, sensorDataSeries: { name: Date; value: any }[]): void {
+      this.secondChartsSeries = [{name: value.sensor.name, series: sensorDataSeries}];
+      const sensorData = SENSOR_TYPES[value.sensor.objectType];
+      this.xAxisLabel = sensorData?.xLabel;
+      this.yAxisLabel = sensorData?.yLabel;
+  }*/
 
   getWeek(date: Date): number {
     const onejan = new Date(date.getFullYear(), 0, 1);
