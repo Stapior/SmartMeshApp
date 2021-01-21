@@ -73,21 +73,11 @@ export class ReadsComponent implements AfterViewInit {
         return {name: data.time.toDate(), value: data.value};
       });
 
-      const dataValues = value.values.map(e => {
-        const data = e.payload.doc.data();
-        // @ts-ignore
-        return {time: data.time.toDate(), value: data.value};
-      });
-
-      this.dataToExport = {
-        sensorName: value.sensor.name,
-        data: dataValues
-      };
-
+      this.setDataToExport(value);
       this.computeStatistics(value, sum);
       this.setMainChartConfig(value, sensorDataSeries);
 
-      //MONTH
+      // MONTH
       // this gives an object with dates as keys
       const groupsMonth = sensorDataSeries.reduce((groupsTmp, values, {}) => {
         const month = values.name.getMonth();
@@ -112,7 +102,7 @@ export class ReadsComponent implements AfterViewInit {
       });
       console.log(valuesPerMonth);
 
-      //WEEK
+      // WEEK
       // this gives an object with dates as keys
       const groupsWeek = sensorDataSeries.reduce((groupsTmp, values, {}) => {
         const week = this.getWeek(values.name);
@@ -137,7 +127,7 @@ export class ReadsComponent implements AfterViewInit {
       });
       console.log(valuesPerWeek);
 
-      //DAYS
+      // DAYS
       // this gives an object with dates as keys
       const groupsDay = sensorDataSeries.reduce((groupsTmp, values, {}) => {
         const day = values.name.getDate();
@@ -171,6 +161,19 @@ export class ReadsComponent implements AfterViewInit {
     )));
   }
 
+  private setDataToExport(value: ObservedValueOf<Observable<{ values: DocumentChangeAction<unknown>[]; range: ObservedValueOf<Observable<{ endDate: any; startDate: any }>>; sensor: MeshObject }>>) {
+    const dataValues = value.values.map(e => {
+      const data = e.payload.doc.data();
+      // @ts-ignore
+      return {time: data.time.toDate(), value: data.value};
+    });
+
+    this.dataToExport = {
+      sensorName: value.sensor.name,
+      data: dataValues
+    };
+  }
+
   private computeStatistics(value: ObservedValueOf<Observable<{ values: DocumentChangeAction<unknown>[]; range: ObservedValueOf<Observable<{ endDate: any; startDate: any }>>; sensor: MeshObject }>>, sum: number) {
     const rawValues: number[] = value.values.map(e => {
       const data = e.payload.doc.data();
@@ -195,7 +198,7 @@ export class ReadsComponent implements AfterViewInit {
     const today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
     const dayOfYear = ((today.getTime() - onejan.getTime() + 86400000) / 86400000);
     return Math.ceil(dayOfYear / 7);
-  };
+  }
 
   export(): void {
     const blob = new Blob([JSON.stringify(this.dataToExport)], {type: 'text/plain;charset=utf-8'});

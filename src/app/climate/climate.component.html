@@ -1,108 +1,109 @@
-<div fxLayout="row" fxLayoutAlign="center center" fxLayout.md="">
-  <form class="example-form" #climateForm="ngForm">
+<div fxLayout="row" fxLayoutAlign="center center">
+  <form class="example-form" #climateForm="ngForm" fxLayout="row">
+    <div fxLayout="column" class="first-column">
+      <mat-form-field>
+        <label>Wybierz date pomiarów</label>
+        <input matInput [matDatepicker]="selectedDateDatePicker" (focus)="selectedDateDatePicker.open()"
+               name="selectedDate" #selectedDateInput="ngModel" [(ngModel)]="selectedDate">
 
-    <mat-form-field>
-      <label>Wybierz date pomiarów</label>
-      <input matInput [matDatepicker]="selectedDateDatePicker" (focus)="selectedDateDatePicker.open()"
-             name="selectedDate" #selectedDateInput="ngModel" [(ngModel)]="selectedDate">
+        <mat-datepicker-toggle matSuffix [for]="selectedDateDatePicker"></mat-datepicker-toggle>
+        <mat-datepicker #selectedDateDatePicker></mat-datepicker>
+      </mat-form-field>
 
-      <mat-datepicker-toggle matSuffix [for]="selectedDateDatePicker" ></mat-datepicker-toggle>
-      <mat-datepicker #selectedDateDatePicker></mat-datepicker>
-    </mat-form-field>
+      <mat-form-field>
+        <label>Wybierz początek 15-minutowego pomiaru</label>
+        <input matInput type="time" #timeInput="ngModel" name="timeInput" [(ngModel)]="getTime"
+               required/>
+      </mat-form-field>
 
-    <mat-form-field>
-      <label >Wybierz początek 15-minutowego pomiaru</label>
-      <input matInput type="time" #timeInput="ngModel" name="timeInput" [(ngModel)]="getTime"
-             required/>
-    </mat-form-field>
+      <mat-form-field>
+        <label>Wybierz sensor temperatury</label>
+        <mat-select aria-label="Font Style" required name="tempSensorSelect" [(ngModel)]="selectedTempSensor"
+                    #tempSensorInput="ngModel">
+          <mat-option *ngFor="let sensor of tempSensors$ | async" [value]="sensor">{{sensor.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
 
-    <mat-form-field>
-      <label>Wybierz sensor temperatury</label>
-      <mat-select aria-label="Font Style" required name="tempSensorSelect" [(ngModel)]="selectedTempSensor"
-                  #tempSensorInput="ngModel">
-        <mat-option *ngFor="let sensor of tempSensors$ | async" [value]="sensor">{{sensor.name}}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
+      <mat-form-field>
+        <label>Wybierz sensor wilgotności</label>
+        <mat-select aria-label="Font Style" required name="humSensorSelect" [(ngModel)]="selectedHumSensor"
+                    #humSensorInput="ngModel">
+          <mat-option *ngFor="let sensor of humiditySensors$ | async" [value]="sensor">{{sensor.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
 
-    <mat-form-field>
-      <label>Wybierz sensor wilgotności</label>
-      <mat-select aria-label="Font Style" required name="humSensorSelect" [(ngModel)]="selectedHumSensor"
-                  #humSensorInput="ngModel">
-        <mat-option *ngFor="let sensor of humiditySensors$ | async" [value]="sensor">{{sensor.name}}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
+      <ngx-charts-line-chart [view]="view" [scheme]="colorScheme" [legend]="true" [showXAxisLabel]="true"
+                             [showYAxisLabel]="true" [xAxis]="true" [yAxis]="true" [xAxisLabel]="xAxisLabel"
+                             [yAxisLabel]="yAxisLabel"
+                             [results]="chartsSeriesTemp">
+      </ngx-charts-line-chart>
 
-    <ngx-charts-line-chart [view]="view" [scheme]="colorScheme" [legend]="true" [showXAxisLabel]="true"
-                           [showYAxisLabel]="true" [xAxis]="true" [yAxis]="true" [xAxisLabel]="xAxisLabel"
-                           [yAxisLabel]="yAxisLabel"
-                           [results]="chartsSeriesTemp">
-    </ngx-charts-line-chart>
+      <ngx-charts-line-chart [view]="view" [scheme]="colorScheme" [legend]="true" [showXAxisLabel]="true"
+                             [showYAxisLabel]="true" [xAxis]="true" [yAxis]="true" [xAxisLabel]="xAxisLabel"
+                             [yAxisLabel]="'Humidity'"
+                             [results]="chartsSeriesHum">
+      </ngx-charts-line-chart>
+    </div>
+    <div fxLayout="column" class="second-column">
+      <mat-form-field>
+        <mat-label>Avarage value for temperature sensor [C]</mat-label>
+        <input matInput type="number" name="avgTemp" [(ngModel)]="averageValueTemp" [value]="averageValueTemp">
+      </mat-form-field>
 
-    <ngx-charts-line-chart [view]="view" [scheme]="colorScheme" [legend]="true" [showXAxisLabel]="true"
-                           [showYAxisLabel]="true" [xAxis]="true" [yAxis]="true" [xAxisLabel]="xAxisLabel"
-                           [yAxisLabel]="'Humidity'"
-                           [results]="chartsSeriesHum">
-    </ngx-charts-line-chart>
+      <mat-form-field>
+        <mat-label>Avarage value for humidity sensor [%]</mat-label>
+        <input matInput type="number" name="avgHum" [(ngModel)]="averageValueHum" [value]="averageValueHum">
+      </mat-form-field>
 
-    <mat-form-field>
-      <mat-label>Avarage value for temperature sensor [C]</mat-label>
-      <input matInput type="number" name="avgTemp" [(ngModel)]="averageValueTemp" [value]="averageValueTemp">
-    </mat-form-field>
+      <mat-form-field>
+        <mat-label>Metabolizm [met]</mat-label>
+        <input matInput type="number" name="M" [(ngModel)]="M" [matAutocomplete]="autoMeta">
+        <mat-autocomplete #autoMeta="matAutocomplete">
+          <mat-option [value]="0.8">Wypoczynek w pozycji półleżącej = 0.8 met</mat-option>
+          <mat-option [value]="1">Wypoczynek w pozycji siedzącej = 1.0 met</mat-option>
+          <mat-option [value]="1.2">Praca w pozycji siedzącej = 1.2 met</mat-option>
+          <mat-option [value]="1.6">Praca lekka w pozcyji stojącej = 1.6 met</mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
 
-    <mat-form-field>
-      <mat-label>Avarage value for humidity sensor [%]</mat-label>
-      <input matInput type="number" name="avgHum" [(ngModel)]="averageValueHum" [value]="averageValueHum">
-    </mat-form-field>
+      <mat-form-field>
+        <mat-label>Praca [W/m^2]</mat-label>
+        <input matInput type="number" name="W" [(ngModel)]="W">
+      </mat-form-field>
 
-    <mat-form-field>
-      <mat-label>Metabolizm [met]</mat-label>
-      <input matInput type="number" name="M" [(ngModel)]="M" [matAutocomplete]="autoMeta">
-      <mat-autocomplete #autoMeta="matAutocomplete">
-        <mat-option [value]="0.8">Wypoczynek w pozycji półleżącej = 0.8 met</mat-option>
-        <mat-option [value]="1">Wypoczynek w pozycji siedzącej = 1.0 met</mat-option>
-        <mat-option [value]="1.2">Praca w pozycji siedzącej = 1.2 met</mat-option>
-        <mat-option [value]="1.6">Praca lekka w pozcyji stojącej = 1.6 met</mat-option>
-      </mat-autocomplete>
-    </mat-form-field>
+      <mat-form-field>
+        <mat-label>Opór cieplny odzieży [clo]</mat-label>
+        <input matInput type="number" name="Icl" [(ngModel)]="Icl" [matAutocomplete]="autoIcl">
+        <mat-autocomplete #autoIcl="matAutocomplete">
+          <mat-option [value]="0.3">Typowy zestaw odzieży tropikalnej = 0.3 clo</mat-option>
+          <mat-option [value]="0.5">Lekka odzież letnia = 0.5 clo</mat-option>
+          <mat-option [value]="0.7">Lekka odzież robocza = 0.7 clo</mat-option>
+          <mat-option [value]="1.0">Zestaw typowej odzieży zimowej noszonej w domu = 1.0 clo</mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
 
-    <mat-form-field>
-      <mat-label>Praca [W/m^2]</mat-label>
-      <input matInput type="number" name="W" [(ngModel)]="W">
-    </mat-form-field>
+      <mat-form-field>
+        <mat-label>Średnia temperatura promieniowania [C]</mat-label>
+        <input matInput type="number" name="tr" [(ngModel)]="tr">
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Względna prędkość przepływu powietrza [m/s]</mat-label>
+        <input matInput type="number" name="vAr" [(ngModel)]="vAr">
+      </mat-form-field>
 
-    <mat-form-field>
-      <mat-label>Opór cieplny odzieży [clo]</mat-label>
-      <input matInput type="number" name="Icl" [(ngModel)]="Icl" [matAutocomplete]="autoIcl">
-      <mat-autocomplete #autoIcl="matAutocomplete">
-        <mat-option [value]="0.3">Typowy zestaw odzieży tropikalnej = 0.3 clo</mat-option>
-        <mat-option [value]="0.5">Lekka odzież letnia = 0.5 clo</mat-option>
-        <mat-option [value]="0.7">Lekka odzież robocza = 0.7 clo</mat-option>
-        <mat-option [value]="1.0">Zestaw typowej odzieży zimowej noszonej w domu = 1.0 clo</mat-option>
-      </mat-autocomplete>
-    </mat-form-field>
-
-    <mat-form-field>
-      <mat-label>Średnia temperatura promieniowania [C]</mat-label>
-      <input matInput type="number" name="tr" [(ngModel)]="tr">
-    </mat-form-field>
-    <mat-form-field>
-      <mat-label>Względna prędkość przepływu powietrza [m/s]</mat-label>
-      <input matInput type="number" name="vAr" [(ngModel)]="vAr">
-    </mat-form-field>
-
-    <mat-divider></mat-divider>
-
-    <mat-form-field>
-      <mat-label>PMV</mat-label>
-      <input matInput type="number" name="PMV" [readonly]="true" [(ngModel)]="PMV">
-    </mat-form-field>
-    <mat-form-field>
-      <mat-label>PPD [%]</mat-label>
-      <input matInput type="number" name="PPD" [readonly]="true" [(ngModel)]="PPD">
-    </mat-form-field>
-
+      <mat-divider></mat-divider>
+      <div class="result-header">Wyliczone wskaźniki komfortu</div>
+      <mat-form-field>
+        <mat-label>PMV</mat-label>
+        <input matInput type="number" name="PMV" [readonly]="true" [(ngModel)]="PMV">
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>PPD [%]</mat-label>
+        <input matInput type="number" name="PPD" [readonly]="true" [(ngModel)]="PPD">
+      </mat-form-field>
+    </div>
   </form>
 
 </div>

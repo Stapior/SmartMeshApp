@@ -56,7 +56,7 @@
       Max value:{{maxValue}}
     </ng-container>
 
-    <button mat-raised-button (click)="export()">
+    <button mat-raised-button (click)="export()" [disabled]="!dataToExport">
       <mat-icon class="mat-icon material-icons "
                 role="img" aria-hidden="true">import_export
       </mat-icon>
