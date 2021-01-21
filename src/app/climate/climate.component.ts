@@ -173,13 +173,14 @@ export class ClimateComponent implements AfterViewInit {
     console.log('L: ', L);
     console.log('PMV: ', this.PMV);
     console.log('PPD: ', this.PPD);
+    console.log("TEST: ", Math.exp(2));
   }
 
   private getHc(tcl: number): number {
-    if ((2.38 * (angularMath.powerOfNumber((tcl - this.averageValueTemp), 0.25))) < (12.1 * angularMath.squareOfNumber(this.vAr))) {
-      return 12.1 * angularMath.squareOfNumber(this.vAr);
+    if ((2.38 * (Math.pow((tcl - this.averageValueTemp), 0.25))) < (12.1 * Math.pow(this.vAr, 0.5))) {
+      return 12.1 *Math.pow(this.vAr, 0.5);
     } else {
-      return 2.38 * (angularMath.powerOfNumber((tcl - this.averageValueTemp), 0.25));
+      return 2.38 * (Math.pow((tcl - this.averageValueTemp), 0.25));
     }
   }
 
@@ -205,18 +206,17 @@ export class ClimateComponent implements AfterViewInit {
   }
 
   private getL(fcl: number, tcl: number, hc: number, C1: number, C2: number): number {
-    return this.M * (58.2) - this.W - (3.96 * angularMath.powerOfNumber(10, -8) * fcl *
-      (angularMath.powerOfNumber((tcl + 273), 4) - angularMath.powerOfNumber((this.tr + 273), 4)) +
+    return this.M * (58.2) - this.W - (3.96 * Math.pow(10, -8) * fcl *
+      (Math.pow((tcl + 273), 4) - Math.pow((this.tr + 273), 4)) +
       (fcl * hc * (tcl - this.averageValueTemp) + C1 + C2));
   }
 
   private getPmv(L: number): number {
-    return (0.303 * angularMath.powerOfNumber(angularMath.getE(), (-0.036 * this.M * (58.2))) + 0.028) * L;
+    return (0.303 * Math.exp (-0.036 * this.M * (58.2)) + 0.028) * L;
   }
 
   private getPpd(): number {
-    return 100 - 95 * angularMath.powerOfNumber(angularMath.getE(), (-(0.03353 * angularMath.powerOfNumber(this.PMV, 4)) + 0.2179 *
-      angularMath.powerOfNumber(this.PMV, 2)));
+    return 100 - 95*Math.exp(-(0.03353*Math.pow(this.PMV,4) + 0.2179*Math.pow(this.PMV,2)));
   }
 
   private getDatePlusDays(selectedDate: Date, days: number): Date {
@@ -224,6 +224,4 @@ export class ClimateComponent implements AfterViewInit {
     date.setDate(date.getDate() + days);
     return date;
   }
-
-
 }
