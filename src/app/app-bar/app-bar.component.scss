@@ -1,4 +1,8 @@
 :host {
+  .content{
+    padding: 10px;
+  }
+
   .logo span {
     color: white;
     font-size: 22px;
@@ -18,13 +22,14 @@
     margin-left: 20px;
   }
 
-  .toolbar-buttons{
+  .toolbar-buttons {
     width: 100%;
     display: flex;
   }
 
-  button.active-link{
+  button.active-link {
     background-color: #f4511e;
   }
+
 
 }
