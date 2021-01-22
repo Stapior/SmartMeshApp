@@ -161,9 +161,9 @@ export class ReadsComponent implements AfterViewInit {
           return {...v, value: avgValue};
         }));
       });
-      this.secondChartsSeries.push({name: 'minPerDay', series: minGroupedSeries});
-      this.secondChartsSeries.push({name: 'maxPerDay', series: maxGroupedSeries});
-      this.secondChartsSeries.push({name: 'avgPerDay', series: avgGroupedSeries});
+      this.chartsSeries.push({name: 'minPerDay', series: minGroupedSeries});
+      this.chartsSeries.push({name: 'maxPerDay', series: maxGroupedSeries});
+      this.chartsSeries.push({name: 'avgPerDay', series: avgGroupedSeries});
       console.log(valuesPerDay);
     });
 
