@@ -102,29 +102,42 @@ export class ReadsComponent implements AfterViewInit {
       });
       console.log(valuesPerMonth);
 
-      // WEEK
+      // Week
       // this gives an object with dates as keys
-      const groupsWeek = sensorDataSeries.reduce((groupsTmp, values, {}) => {
-        const week = this.getWeek(values.name);
+        const groupsWeek = sensorDataSeries.reduce((groupsTmp, values, {}) => {
+        const week = values.name.getWeek();
         const year = values.name.getFullYear();
-        const weekAndYear = String(week).concat('/', String(year));
+        const weekAndYear: string = String(week).concat('/', String(year));
         if (!groupsTmp[weekAndYear]) {
           groupsTmp[weekAndYear] = [];
         }
-        groupsTmp[weekAndYear].push(values.value);
+        groupsTmp[weekAndYear].push(values);
         return groupsTmp;
       }, {});
 
       // Edit: to add it in the array format instead
+      let minGroupedSeriesWeeks = [];
+      let maxGroupedSeriesWeeks = [];
+      let avgGroupedSeriesWeeks = [];
       const valuesPerWeek = Object.keys(groupsWeek).map((weekAndYear) => {
-        return {
-          weekAndYear,
-          values: groupsWeek[weekAndYear],
-          minValue: Math.min.apply(Math, groupsWeek[weekAndYear]),
-          maxValue: Math.max.apply(Math, groupsWeek[weekAndYear]),
-          avgValue: (groupsWeek[weekAndYear].reduce((a, b) => a + b, 0) / groupsWeek[weekAndYear].length).toFixed(2)
-        };
+        const minValue = Math.min.apply(Math, groupsDay[weekAndYear].map(v => v.value));
+        const maxValue = Math.max.apply(Math, groupsDay[weekAndYear].map(v => v.value));
+        const avgValue = (groupsDay[weekAndYear].map(v => v.value).reduce((a, b) => a + b, 0) / groupsDay[weekAndYear].length).toFixed(2);
+        minGroupedSeriesWeeks = minGroupedSeriesWeeks.concat(groupsWeek[weekAndYear].map(v => {
+          return {...v, value: minValue};
+        }));
+
+        maxGroupedSeriesWeeks = maxGroupedSeriesWeeks.concat(groupsWeek[weekAndYear].map(v => {
+          return {...v, value: maxValue};
+        }));
+
+        avgGroupedSeriesWeeks = avgGroupedSeriesWeeks.concat(groupsWeek[weekAndYear].map(v => {
+          return {...v, value: avgValue};
+        }));
       });
+      this.chartsSeries.push({name: 'minPerWeek', series: minGroupedSeriesWeeks});
+      this.chartsSeries.push({name: 'maxPerWeek', series: maxGroupedSeriesWeeks});
+      this.chartsSeries.push({name: 'avgPerWeek', series: avgGroupedSeriesWeeks});
       console.log(valuesPerWeek);
 
       // DAYS
@@ -142,28 +155,28 @@ export class ReadsComponent implements AfterViewInit {
       }, {});
 
       // Edit: to add it in the array format instead
-      let minGroupedSeries = [];
-      let maxGroupedSeries = [];
-      let avgGroupedSeries = [];
+      let minGroupedSeriesDays = [];
+      let maxGroupedSeriesDays = [];
+      let avgGroupedSeriesDays = [];
       const valuesPerDay = Object.keys(groupsDay).map((date) => {
         const minValue = Math.min.apply(Math, groupsDay[date].map(v => v.value));
         const maxValue = Math.max.apply(Math, groupsDay[date].map(v => v.value));
         const avgValue = (groupsDay[date].map(v => v.value).reduce((a, b) => a + b, 0) / groupsDay[date].length).toFixed(2);
-        minGroupedSeries = minGroupedSeries.concat(groupsDay[date].map(v => {
+        minGroupedSeriesDays = minGroupedSeriesDays.concat(groupsDay[date].map(v => {
           return {...v, value: minValue};
         }));
 
-        maxGroupedSeries = maxGroupedSeries.concat(groupsDay[date].map(v => {
+        maxGroupedSeriesDays = maxGroupedSeriesDays.concat(groupsDay[date].map(v => {
           return {...v, value: maxValue};
         }));
 
-        avgGroupedSeries = avgGroupedSeries.concat(groupsDay[date].map(v => {
+        avgGroupedSeriesDays = avgGroupedSeriesDays.concat(groupsDay[date].map(v => {
           return {...v, value: avgValue};
         }));
       });
-      this.chartsSeries.push({name: 'minPerDay', series: minGroupedSeries});
-      this.chartsSeries.push({name: 'maxPerDay', series: maxGroupedSeries});
-      this.chartsSeries.push({name: 'avgPerDay', series: avgGroupedSeries});
+      this.chartsSeries.push({name: 'minPerDay', series: minGroupedSeriesDays});
+      this.chartsSeries.push({name: 'maxPerDay', series: maxGroupedSeriesDays});
+      this.chartsSeries.push({name: 'avgPerDay', series: avgGroupedSeriesDays});
       console.log(valuesPerDay);
     });
 
