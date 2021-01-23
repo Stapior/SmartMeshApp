@@ -15,11 +15,6 @@ import * as FileSaver from 'file-saver';
 })
 export class ReadsComponent implements AfterViewInit {
 
-  getUrl()
-  {
-    return 'url(\'/assets/images/background.png\')';
-  };
-
   view: any[] = [700, 300];
   xAxisLabel = 'X';
   yAxisLabel = 'Y';
@@ -256,7 +251,7 @@ export class ReadsComponent implements AfterViewInit {
 
     this.maxValue = Math.max.apply(Math, rawValues);
     this.minValue = Math.min.apply(Math, rawValues);
-    this.averageValue = sum / value.values.length;
+    this.averageValue = (sum / value.values.length).toFixed(2);
   }
 
   private setMainChartConfig(value: ObservedValueOf<Observable<{ values: DocumentChangeAction<unknown>[]; range: ObservedValueOf<Observable<{ endDate: any; startDate: any }>>; sensor: MeshObject }>>, sensorDataSeries: { name: Date; value: any }[]): void {

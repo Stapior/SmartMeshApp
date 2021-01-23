@@ -22,7 +22,7 @@
     </button>
   </div>
 </mat-toolbar>
-<mat-sidenav-container fxFlexFill class="example-container">
+<mat-sidenav-container fxFlexFill class="example-container" [ngStyle]="{'height': 'revert'}">
   <mat-sidenav color="primary" #sidenav fxLayout="column" mode="over" opened="false" fxHide.gt-sm="true">
     <div fxLayout="column" fxLayoutGap="10px">
       <a mat-button routerLinkActive="active-link" routerLink="objects">Obiekty</a>

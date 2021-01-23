@@ -31,5 +31,12 @@
     background-color: #f4511e;
   }
 
+  .example-container {
+      background-image: url("/assets/images/background.png");
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      background-size: cover;
+  }
+
 
 }

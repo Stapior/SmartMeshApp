@@ -12,6 +12,7 @@ import {MatButtonToggle} from '@angular/material/button-toggle';
   styleUrls: ['./objects.component.scss']
 })
 export class ObjectsComponent implements OnInit {
+
   types: Observable<string[]>;
 
   objects$: Observable<MeshObject[]>;
