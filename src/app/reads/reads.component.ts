@@ -187,10 +187,19 @@ export class ReadsComponent implements AfterViewInit {
           return {...v, value: avgValue};
         }));
       });
-      this.chartsSeries.push({name: 'minPerDay', series: minGroupedSeriesDays});
-      this.chartsSeries.push({name: 'maxPerDay', series: maxGroupedSeriesDays});
-      this.chartsSeries.push({name: 'avgPerDay', series: avgGroupedSeriesDays});
+      const secondSensorDataSeries = value.values.map(e => {
+        const data = e.payload.doc.data();
+        // @ts-ignore
+        return {name: data.time.toDate(), value: data.value};
+      });
+
+      this.setSecondChartConfig(value, secondSensorDataSeries);
       console.log(valuesPerDay);
+
+      this.secondChartsSeries.pop();
+      this.secondChartsSeries.push({name: 'minPerDay', series: minGroupedSeriesDays});
+      this.secondChartsSeries.push({name: 'maxPerDay', series: maxGroupedSeriesDays});
+      this.secondChartsSeries.push({name: 'avgPerDay', series: avgGroupedSeriesDays});
     });
 
 
@@ -232,12 +241,12 @@ export class ReadsComponent implements AfterViewInit {
     this.yAxisLabel = sensorData?.yLabel;
   }
 
-  /*private setSecondChartConfig(value: ObservedValueOf<Observable<{ values: DocumentChangeAction<unknown>[]; range: ObservedValueOf<Observable<{ endDate: any; startDate: any }>>; sensor: MeshObject }>>, sensorDataSeries: { name: Date; value: any }[]): void {
-      this.secondChartsSeries = [{name: value.sensor.name, series: sensorDataSeries}];
-      const sensorData = SENSOR_TYPES[value.sensor.objectType];
-      this.xAxisLabel = sensorData?.xLabel;
-      this.yAxisLabel = sensorData?.yLabel;
-  }*/
+  private setSecondChartConfig(value: ObservedValueOf<Observable<{ values: DocumentChangeAction<unknown>[]; range: ObservedValueOf<Observable<{ endDate: any; startDate: any }>>; sensor: MeshObject }>>, sensorDataSeries: { name: Date; value: any }[]): void {
+    this.secondChartsSeries = [{name: value.sensor.name, series: sensorDataSeries}];
+    const sensorData = SENSOR_TYPES[value.sensor.objectType];
+    this.xAxisLabel = sensorData?.xLabel;
+    this.yAxisLabel = sensorData?.yLabel;
+  }
 
   getWeek(date: Date): number {
     const onejan = new Date(date.getFullYear(), 0, 1);
