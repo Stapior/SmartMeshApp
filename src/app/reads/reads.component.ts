@@ -79,27 +79,40 @@ export class ReadsComponent implements AfterViewInit {
 
       // MONTH
       // this gives an object with dates as keys
-      const groupsMonth = sensorDataSeries.reduce((groupsTmp, values, {}) => {
+        const groupsMonth = sensorDataSeries.reduce((groupsTmp, values, {}) => {
         const month = values.name.getMonth();
         const year = values.name.getFullYear();
-        const monthAndYear = String(month).concat('/', String(year));
+        const monthAndYear: string = String(month).concat('/', String(year));
         if (!groupsTmp[monthAndYear]) {
           groupsTmp[monthAndYear] = [];
         }
-        groupsTmp[monthAndYear].push(values.value);
+        groupsTmp[monthAndYear].push(values);
         return groupsTmp;
       }, {});
 
       // Edit: to add it in the array format instead
+      let minGroupedSeriesMonths = [];
+      let maxGroupedSeriesMonths = [];
+      let avgGroupedSeriesMonths = [];
       const valuesPerMonth = Object.keys(groupsMonth).map((monthAndYear) => {
-        return {
-          monthAndYear,
-          values: groupsMonth[monthAndYear],
-          minValue: Math.min.apply(Math, groupsMonth[monthAndYear]),
-          maxValue: Math.max.apply(Math, groupsMonth[monthAndYear]),
-          avgValue: (groupsMonth[monthAndYear].reduce((a, b) => a + b, 0) / groupsMonth[monthAndYear].length).toFixed(2)
-        };
+        const minValue = Math.min.apply(Math, groupsMonth[monthAndYear].map(v => v.value));
+        const maxValue = Math.max.apply(Math, groupsMonth[monthAndYear].map(v => v.value));
+        const avgValue = (groupsMonth[monthAndYear].map(v => v.value).reduce((a, b) => a + b, 0) / groupsMonth[monthAndYear].length).toFixed(2);
+        minGroupedSeriesMonths = minGroupedSeriesMonths.concat(groupsMonth[monthAndYear].map(v => {
+          return {...v, value: minValue};
+        }));
+
+        maxGroupedSeriesMonths = maxGroupedSeriesMonths.concat(groupsMonth[monthAndYear].map(v => {
+          return {...v, value: maxValue};
+        }));
+
+        avgGroupedSeriesMonths = avgGroupedSeriesMonths.concat(groupsMonth[monthAndYear].map(v => {
+          return {...v, value: avgValue};
+        }));
       });
+      this.chartsSeries.push({name: 'minPerMonth', series: minGroupedSeriesMonths});
+      this.chartsSeries.push({name: 'maxPerMonth', series: maxGroupedSeriesMonths});
+      this.chartsSeries.push({name: 'avgPerMonth', series: avgGroupedSeriesMonths});
       console.log(valuesPerMonth);
 
       // Week
