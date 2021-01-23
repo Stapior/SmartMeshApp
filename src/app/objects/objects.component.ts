@@ -2,9 +2,9 @@ import {Component, OnInit} from '@angular/core';
 import {ObjectsStore} from './objects-store.service';
 import {MeshObject} from './object';
 import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
-import {MatSelectChange} from '@angular/material/select';
 import {map} from 'rxjs/operators';
-import {MatButtonToggle} from '@angular/material/button-toggle';
+import {ReadsService} from '../reads/reads.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-objects',
@@ -18,7 +18,7 @@ export class ObjectsComponent implements OnInit {
   type: BehaviorSubject<string> = new BehaviorSubject('all');
   currentType = 'all';
 
-  constructor(private objectsStore: ObjectsStore) {
+  constructor(private objectsStore: ObjectsStore, private readsService: ReadsService, private router: Router) {
   }
 
   ngOnInit(): void {
@@ -38,5 +38,20 @@ export class ObjectsComponent implements OnInit {
 
   onChangeType(value: string): void {
     this.type.next(value);
+  }
+
+  changeValue(event: Event, object: MeshObject): void {
+    event.stopPropagation();
+    this.objectsStore.changeValue(object);
+  }
+
+  trackByObjectId(index: number, object: MeshObject): string {
+    return object.id;
+  }
+
+  goToValues($event: MouseEvent, object: MeshObject): void {
+    $event.stopPropagation();
+    this.readsService.preSelectedSensor = object;
+    this.router.navigate(['meshHome/reads']);
   }
 }

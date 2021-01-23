@@ -3,6 +3,8 @@ import {AngularFirestore} from '@angular/fire/firestore';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {MeshObject} from './object';
 import {map} from 'rxjs/operators';
+import firebase from 'firebase';
+import DocumentReference = firebase.firestore.DocumentReference;
 
 @Injectable({
   providedIn: 'root'
@@ -36,6 +38,17 @@ export class ObjectsStore {
     const objCopy = {...object};
     delete objCopy.id;
     return this.firestore.doc('objects/' + object.id).update(objCopy);
+  }
+
+  changeValue(object: MeshObject): Promise<DocumentReference> {
+    const objCopy = {...object};
+    delete objCopy.id;
+    return this.firestore.collection('changes').add({
+      nodeId: object.nodeId,
+      objectId: object.objectId,
+      done: false,
+      newValue: object.value ? 0 : 1
+    });
   }
 }
 

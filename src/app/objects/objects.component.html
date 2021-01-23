@@ -5,13 +5,33 @@
     </mat-button-toggle-group>
 
   <mat-accordion>
-    <mat-expansion-panel *ngFor="let object of objects$ | async">
+    <mat-expansion-panel *ngFor="let object of objects$ | async ; trackBy:trackByObjectId">
       <mat-expansion-panel-header>
         <mat-panel-title>
           Nazwa: {{object.name}}
         </mat-panel-title>
-        <mat-panel-description fxShow="true" fxHide.lt-md="true">
-          Typ: {{object.objectType}} Opis: {{object.description}}
+        <mat-panel-description >
+          <div fxLayout="row" fxLayoutAlign="center center">
+            <div *ngIf="object.objectType === 'relay'" fxLayout="row" fxLayoutAlign="center center">
+              <mat-icon [ngStyle]="{'color': object.value ? 'green' : 'grey'}" style="cursor: pointer;">circle
+              </mat-icon>
+              <button mat-raised-button
+                      class="header-button"
+                      (click)="changeValue( $event, object)">
+                {{object.value ? 'Turn off' : 'Turn on'}}
+              </button>
+            </div>
+            <div *ngIf="object?.objectType?.endsWith('Sensor')" fxLayout="row" fxLayoutAlign="center center">
+              <button mat-raised-button
+                      class="header-button"
+                      (click)="goToValues( $event, object)">
+                Go to values
+              </button>
+            </div>
+            <div fxShow="true" fxHide.lt-md="true">
+              Opis: {{object.description}}
+            </div>
+          </div>
         </mat-panel-description>
       </mat-expansion-panel-header>
       <div class="content">
@@ -44,12 +64,21 @@
                    disabled
                    name="Identyfikator wewnętrzny">
           </mat-form-field>
-
+          <mat-form-field *ngIf="object.objectType === 'relay'" floatLabel="always">
+            <input matInput placeholder="Wartość"
+                   [(ngModel)]="object.value"
+                   disabled
+                   name="Wartość">
+          </mat-form-field>
         </form>
         <div class="buttons-container">
           <button mat-raised-button color="primary"
                   (click)="updateCourse(object)">
             Zapisz
+          </button>
+          <button *ngIf="object.objectType === 'relay'" mat-raised-button color="primary"
+                  (click)="changeValue(object)">
+            {{object.value ? 'Turn off' : 'Turn on'}}
           </button>
         </div>
       </div>

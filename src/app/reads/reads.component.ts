@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {AngularFirestore, DocumentChangeAction} from '@angular/fire/firestore';
 import {combineLatest, Observable, ObservedValueOf, Subject} from 'rxjs';
 import {MeshObject} from '../objects/object';
@@ -7,18 +7,14 @@ import {ObjectsStore} from '../objects/objects-store.service';
 import {NgModel} from '@angular/forms';
 import {SENSOR_TYPES} from './sensor-types';
 import * as FileSaver from 'file-saver';
+import {ReadsService} from './reads.service';
 
 @Component({
   selector: 'app-reads',
   templateUrl: './reads.component.html',
   styleUrls: ['./reads.component.scss']
 })
-export class ReadsComponent implements AfterViewInit {
-
-  getUrl()
-  {
-    return 'url(\'/assets/images/background.png\')';
-  };
+export class ReadsComponent implements AfterViewInit, OnInit {
 
   view: any[] = [700, 300];
   xAxisLabel = 'X';
@@ -42,14 +38,21 @@ export class ReadsComponent implements AfterViewInit {
 
   availableSensors$: Observable<MeshObject[]>;
   range: Subject<any> = new Subject<any>();
-
-
+  selectedSensor: MeshObject;
   @ViewChild('sensorInput') sensorInput: NgModel;
   @ViewChild('startDateInput') startDateInput: NgModel;
   @ViewChild('endDateInput') endDateInput: NgModel;
 
-  constructor(private firestore: AngularFirestore, private objectsStore: ObjectsStore) {
+  constructor(private firestore: AngularFirestore, private objectsStore: ObjectsStore, private readsService: ReadsService) {
 
+  }
+
+  ngOnInit(): void {
+    const preSelected = this.readsService.preSelectedSensor;
+    if (preSelected) {
+      this.selectedSensor = preSelected;
+      this.readsService.preSelectedSensor = undefined;
+    }
   }
 
   getMinus7Days(): Date {
@@ -86,7 +89,7 @@ export class ReadsComponent implements AfterViewInit {
 
       // MONTH
       // this gives an object with dates as keys
-        const groupsMonth = sensorDataSeries.reduce((groupsTmp, values, {}) => {
+      const groupsMonth = sensorDataSeries.reduce((groupsTmp, values, {}) => {
         const month = values.name.getMonth();
         const year = values.name.getFullYear();
         const monthAndYear: string = String(month).concat('/', String(year));
@@ -120,7 +123,7 @@ export class ReadsComponent implements AfterViewInit {
 
       // Week
       // this gives an object with dates as keys
-        const groupsWeek = sensorDataSeries.reduce((groupsTmp, values, {}) => {
+      const groupsWeek = sensorDataSeries.reduce((groupsTmp, values, {}) => {
         const week = this.getWeek(values.name);
         const year = values.name.getFullYear();
         const weekAndYear: string = String(week).concat('/', String(year));
@@ -154,7 +157,7 @@ export class ReadsComponent implements AfterViewInit {
 
       // DAYS
       // this gives an object with dates as keys
-        const groupsDay = sensorDataSeries.reduce((groupsTmp, values, {}) => {
+      const groupsDay = sensorDataSeries.reduce((groupsTmp, values, {}) => {
         const day = values.name.getDate();
         const month = values.name.getMonth();
         const year = values.name.getFullYear();

@@ -1,8 +1,7 @@
-<div fxLayout="row" fxLayoutAlign="center center" [ngStyle]="{'background-image': getUrl(), 'background-repeat': 'no-repeat', 'background-attachment': 'fixed', 'background-size': 'cover'}">
-
+<div class="main-container" fxLayout="row" fxLayoutAlign="center center" >
   <form class="example-form" #readsFrom="ngForm">
     <mat-form-field>
-      <mat-select [placeholder]="'Select a sensor'" required name="sensorSelect" ngModel #sensorInput="ngModel">
+      <mat-select [placeholder]="'Select a sensor'" required name="sensorSelect" [(ngModel)]="selectedSensor" #sensorInput="ngModel">
         <mat-option *ngFor="let sensor of availableSensors$ | async" [value]="sensor">
           {{ sensor.name }}
         </mat-option>

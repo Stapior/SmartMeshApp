@@ -1,13 +1,14 @@
-import { Injectable } from '@angular/core';
-import {AngularFirestore} from '@angular/fire/firestore';
+import {Injectable} from '@angular/core';
+import {MeshObject} from '../objects/object';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ReadsService {
-  constructor(private firestore: AngularFirestore) {
+  preSelectedSensor: MeshObject;
 
-
+  constructor() {
 
   }
+
 }
