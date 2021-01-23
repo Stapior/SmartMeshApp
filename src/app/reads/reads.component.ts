@@ -105,7 +105,7 @@ export class ReadsComponent implements AfterViewInit {
       // Week
       // this gives an object with dates as keys
         const groupsWeek = sensorDataSeries.reduce((groupsTmp, values, {}) => {
-        const week = values.name.getWeek();
+        const week = this.getWeek(values.name);
         const year = values.name.getFullYear();
         const weekAndYear: string = String(week).concat('/', String(year));
         if (!groupsTmp[weekAndYear]) {
@@ -120,9 +120,9 @@ export class ReadsComponent implements AfterViewInit {
       let maxGroupedSeriesWeeks = [];
       let avgGroupedSeriesWeeks = [];
       const valuesPerWeek = Object.keys(groupsWeek).map((weekAndYear) => {
-        const minValue = Math.min.apply(Math, groupsDay[weekAndYear].map(v => v.value));
-        const maxValue = Math.max.apply(Math, groupsDay[weekAndYear].map(v => v.value));
-        const avgValue = (groupsDay[weekAndYear].map(v => v.value).reduce((a, b) => a + b, 0) / groupsDay[weekAndYear].length).toFixed(2);
+        const minValue = Math.min.apply(Math, groupsWeek[weekAndYear].map(v => v.value));
+        const maxValue = Math.max.apply(Math, groupsWeek[weekAndYear].map(v => v.value));
+        const avgValue = (groupsWeek[weekAndYear].map(v => v.value).reduce((a, b) => a + b, 0) / groupsWeek[weekAndYear].length).toFixed(2);
         minGroupedSeriesWeeks = minGroupedSeriesWeeks.concat(groupsWeek[weekAndYear].map(v => {
           return {...v, value: minValue};
         }));
