@@ -50,6 +50,38 @@
       >
       </ngx-charts-line-chart>
     </div>
+    <div>
+      <ngx-charts-line-chart
+        [view]="view"
+        [scheme]="colorScheme"
+        [legend]="true"
+        [showXAxisLabel]="true"
+        [showYAxisLabel]="true"
+        [xAxis]="true"
+        [yAxis]="true"
+        [xAxisLabel]="xAxisLabel"
+        [yAxisLabel]="yAxisLabel"
+        [timeline]="timeline"
+        [results]="thirdChartsSeries"
+      >
+      </ngx-charts-line-chart>
+    </div>
+    <div>
+      <ngx-charts-line-chart
+        [view]="view"
+        [scheme]="colorScheme"
+        [legend]="true"
+        [showXAxisLabel]="true"
+        [showYAxisLabel]="true"
+        [xAxis]="true"
+        [yAxis]="true"
+        [xAxisLabel]="xAxisLabel"
+        [yAxisLabel]="yAxisLabel"
+        [timeline]="timeline"
+        [results]="fourthChartsSeries"
+      >
+      </ngx-charts-line-chart>
+    </div>
     <ng-container *ngIf="averageValue">
       Average value: {{averageValue}}
       Min value: {{minValue}}

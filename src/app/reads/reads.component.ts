@@ -30,6 +30,8 @@ export class ReadsComponent implements AfterViewInit {
 
   chartsSeries: any[];
   secondChartsSeries: any[];
+  thirdChartsSeries: any[];
+  fourthChartsSeries: any[];
   startDate: Date = this.getMinus7Days();
   endDate: Date = new Date();
 
@@ -110,10 +112,6 @@ export class ReadsComponent implements AfterViewInit {
           return {...v, value: avgValue};
         }));
       });
-      this.chartsSeries.push({name: 'minPerMonth', series: minGroupedSeriesMonths});
-      this.chartsSeries.push({name: 'maxPerMonth', series: maxGroupedSeriesMonths});
-      this.chartsSeries.push({name: 'avgPerMonth', series: avgGroupedSeriesMonths});
-      console.log(valuesPerMonth);
 
       // Week
       // this gives an object with dates as keys
@@ -148,10 +146,6 @@ export class ReadsComponent implements AfterViewInit {
           return {...v, value: avgValue};
         }));
       });
-      this.chartsSeries.push({name: 'minPerWeek', series: minGroupedSeriesWeeks});
-      this.chartsSeries.push({name: 'maxPerWeek', series: maxGroupedSeriesWeeks});
-      this.chartsSeries.push({name: 'avgPerWeek', series: avgGroupedSeriesWeeks});
-      console.log(valuesPerWeek);
 
       // DAYS
       // this gives an object with dates as keys
@@ -193,13 +187,39 @@ export class ReadsComponent implements AfterViewInit {
         return {name: data.time.toDate(), value: data.value};
       });
 
-      this.setSecondChartConfig(value, secondSensorDataSeries);
+      const thirdSensorDataSeries = value.values.map(e => {
+        const data = e.payload.doc.data();
+        // @ts-ignore
+        return {name: data.time.toDate(), value: data.value};
+      });
+
+      const fourthSensorDataSeries = value.values.map(e => {
+        const data = e.payload.doc.data();
+        // @ts-ignore
+        return {name: data.time.toDate(), value: data.value};
+      });
+
+      console.log(valuesPerMonth);
+      console.log(valuesPerWeek);
       console.log(valuesPerDay);
+      this.setSecondChartConfig(value, secondSensorDataSeries);
+      this.setThirdChartConfig(value, thirdSensorDataSeries);
+      this.setFourthChartConfig(value, fourthSensorDataSeries);
 
       this.secondChartsSeries.pop();
       this.secondChartsSeries.push({name: 'minPerDay', series: minGroupedSeriesDays});
-      this.secondChartsSeries.push({name: 'maxPerDay', series: maxGroupedSeriesDays});
-      this.secondChartsSeries.push({name: 'avgPerDay', series: avgGroupedSeriesDays});
+      this.secondChartsSeries.push({name: 'minPerWeek', series: minGroupedSeriesWeeks});
+      this.secondChartsSeries.push({name: 'minPerMonth', series: minGroupedSeriesMonths});
+
+      this.thirdChartsSeries.pop();
+      this.thirdChartsSeries.push({name: 'maxPerDay', series: maxGroupedSeriesDays});
+      this.thirdChartsSeries.push({name: 'maxPerWeek', series: maxGroupedSeriesWeeks});
+      this.thirdChartsSeries.push({name: 'maxPerMonth', series: avgGroupedSeriesMonths});
+
+      this.fourthChartsSeries.pop();
+      this.fourthChartsSeries.push({name: 'avgPerDay', series: minGroupedSeriesDays});
+      this.fourthChartsSeries.push({name: 'avgPerWeek', series: maxGroupedSeriesWeeks});
+      this.fourthChartsSeries.push({name: 'avgPerMonth', series: avgGroupedSeriesMonths});
     });
 
 
@@ -243,6 +263,20 @@ export class ReadsComponent implements AfterViewInit {
 
   private setSecondChartConfig(value: ObservedValueOf<Observable<{ values: DocumentChangeAction<unknown>[]; range: ObservedValueOf<Observable<{ endDate: any; startDate: any }>>; sensor: MeshObject }>>, sensorDataSeries: { name: Date; value: any }[]): void {
     this.secondChartsSeries = [{name: value.sensor.name, series: sensorDataSeries}];
+    const sensorData = SENSOR_TYPES[value.sensor.objectType];
+    this.xAxisLabel = sensorData?.xLabel;
+    this.yAxisLabel = sensorData?.yLabel;
+  }
+
+  private setThirdChartConfig(value: ObservedValueOf<Observable<{ values: DocumentChangeAction<unknown>[]; range: ObservedValueOf<Observable<{ endDate: any; startDate: any }>>; sensor: MeshObject }>>, sensorDataSeries: { name: Date; value: any }[]): void {
+    this.thirdChartsSeries = [{name: value.sensor.name, series: sensorDataSeries}];
+    const sensorData = SENSOR_TYPES[value.sensor.objectType];
+    this.xAxisLabel = sensorData?.xLabel;
+    this.yAxisLabel = sensorData?.yLabel;
+  }
+
+  private setFourthChartConfig(value: ObservedValueOf<Observable<{ values: DocumentChangeAction<unknown>[]; range: ObservedValueOf<Observable<{ endDate: any; startDate: any }>>; sensor: MeshObject }>>, sensorDataSeries: { name: Date; value: any }[]): void {
+    this.fourthChartsSeries = [{name: value.sensor.name, series: sensorDataSeries}];
     const sensorData = SENSOR_TYPES[value.sensor.objectType];
     this.xAxisLabel = sensorData?.xLabel;
     this.yAxisLabel = sensorData?.yLabel;
