@@ -259,7 +259,23 @@ export class ReadsComponent implements AfterViewInit {
 
     this.maxValue = Math.max.apply(Math, rawValues);
     this.minValue = Math.min.apply(Math, rawValues);
-    this.averageValue = (sum / value.values.length).toFixed(2);
+    this.averageValue = (sum / value.values.length);
+
+    if (Number.isNaN(this.averageValue) || !Number.isFinite(this.averageValue)) {
+          this.averageValue = 'Brak danych';
+        } else {
+          this.averageValue = this.averageValue.toFixed(2);
+        }
+    if (Number.isNaN(this.minValue) || !Number.isFinite(this.minValue)) {
+          this.minValue = 'Brak danych';
+        } else {
+          this.minValue = this.minValue.toFixed(2);
+        }
+    if (Number.isNaN(this.maxValue) || !Number.isFinite(this.maxValue)) {
+          this.maxValue = 'Brak danych';
+        } else {
+          this.maxValue = this.maxValue.toFixed(2);
+        }
   }
 
   private setMainChartConfig(value: ObservedValueOf<Observable<{ values: DocumentChangeAction<unknown>[]; range: ObservedValueOf<Observable<{ endDate: any; startDate: any }>>; sensor: MeshObject }>>, sensorDataSeries: { name: Date; value: any }[]): void {
