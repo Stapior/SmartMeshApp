@@ -13,11 +13,6 @@ import {MatButtonToggle} from '@angular/material/button-toggle';
 })
 export class ObjectsComponent implements OnInit {
 
-  getUrl()
-  {
-     return 'url(\'/assets/images/background.png\')';
-  };
-
   types: Observable<string[]>;
 
   objects$: Observable<MeshObject[]>;
