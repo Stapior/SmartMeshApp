@@ -207,19 +207,19 @@ export class ReadsComponent implements AfterViewInit {
       this.setFourthChartConfig(value, fourthSensorDataSeries);
 
       this.secondChartsSeries.pop();
-      this.secondChartsSeries.push({name: 'minPerDay', series: minGroupedSeriesDays});
-      this.secondChartsSeries.push({name: 'minPerWeek', series: minGroupedSeriesWeeks});
-      this.secondChartsSeries.push({name: 'minPerMonth', series: minGroupedSeriesMonths});
+      this.secondChartsSeries.push({name: 'min per day', series: minGroupedSeriesDays});
+      this.secondChartsSeries.push({name: 'max per day', series: maxGroupedSeriesDays});
+      this.secondChartsSeries.push({name: 'avg per day', series: avgGroupedSeriesDays});
 
       this.thirdChartsSeries.pop();
-      this.thirdChartsSeries.push({name: 'maxPerDay', series: maxGroupedSeriesDays});
-      this.thirdChartsSeries.push({name: 'maxPerWeek', series: maxGroupedSeriesWeeks});
-      this.thirdChartsSeries.push({name: 'maxPerMonth', series: avgGroupedSeriesMonths});
+      this.thirdChartsSeries.push({name: 'min per week', series: minGroupedSeriesWeeks});
+      this.thirdChartsSeries.push({name: 'max per week', series: maxGroupedSeriesWeeks});
+      this.thirdChartsSeries.push({name: 'avg per week', series: avgGroupedSeriesWeeks});
 
       this.fourthChartsSeries.pop();
-      this.fourthChartsSeries.push({name: 'avgPerDay', series: minGroupedSeriesDays});
-      this.fourthChartsSeries.push({name: 'avgPerWeek', series: maxGroupedSeriesWeeks});
-      this.fourthChartsSeries.push({name: 'avgPerMonth', series: avgGroupedSeriesMonths});
+      this.fourthChartsSeries.push({name: 'min per month', series: minGroupedSeriesMonths});
+      this.fourthChartsSeries.push({name: 'max per month', series: maxGroupedSeriesMonths});
+      this.fourthChartsSeries.push({name: 'avg per month', series: avgGroupedSeriesMonths});
     });
 
 
