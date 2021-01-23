@@ -1,4 +1,4 @@
-<div fxLayout="row" fxLayoutAlign="center center" [ngStyle]="{'background-image': getUrl()}">
+<div fxLayout="row" fxLayoutAlign="center center" [ngStyle]="{'background-image': getUrl(), 'background-repeat': 'no-repeat', 'background-attachment': 'fixed', 'background-size': 'cover'}">
 
   <form class="example-form" #readsFrom="ngForm">
     <mat-form-field>
@@ -31,6 +31,7 @@
         [yAxisLabel]="yAxisLabel"
         [timeline]="timeline"
         [results]="chartsSeries"
+        [rangeFillOpacity]=1
       >
       </ngx-charts-line-chart>
     </div>
