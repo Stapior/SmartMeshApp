@@ -25,7 +25,7 @@ export class ReadsComponent implements AfterViewInit {
   minValue;
 
   colorScheme = {
-    domain: ['#5AA454', '#E44D25', '#CFC0BB', '#7aa3e5', '#a8385d', '#aae3f5']
+    domain: ['#5AA454', '#E44D25', '#8931BD', '#7aa3e5', '#a8385d', '#aae3f5']
   };
 
   chartsSeries: any[];
