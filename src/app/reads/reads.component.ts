@@ -17,7 +17,7 @@ export class ReadsComponent implements AfterViewInit {
 
   getUrl()
   {
-    return 'url(\'background.png\')';
+    return 'url(\'/assets/images/background.png\')';
   };
 
   view: any[] = [700, 300];
