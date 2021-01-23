@@ -15,6 +15,11 @@ import * as FileSaver from 'file-saver';
 })
 export class ReadsComponent implements AfterViewInit {
 
+  getUrl()
+  {
+    return 'url(\'background.png\')';
+  };
+
   view: any[] = [700, 300];
   xAxisLabel = 'X';
   yAxisLabel = 'Y';
