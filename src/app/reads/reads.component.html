@@ -1,4 +1,5 @@
-<div class="main-container" fxLayout="row" fxLayoutAlign="center center" >
+<div fxLayout="row" fxLayoutAlign="center center">
+
   <form class="example-form" #readsFrom="ngForm">
     <mat-form-field>
       <mat-select [placeholder]="'Select a sensor'" required name="sensorSelect" [(ngModel)]="selectedSensor" #sensorInput="ngModel">

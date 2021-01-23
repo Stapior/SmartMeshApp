@@ -12,6 +12,7 @@ import {Router} from '@angular/router';
   styleUrls: ['./objects.component.scss']
 })
 export class ObjectsComponent implements OnInit {
+
   types: Observable<string[]>;
 
   objects$: Observable<MeshObject[]>;

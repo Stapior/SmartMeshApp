@@ -10,6 +10,7 @@ import DocumentReference = firebase.firestore.DocumentReference;
   providedIn: 'root'
 })
 export class ObjectsStore {
+
   objects: BehaviorSubject<MeshObject[]> = new BehaviorSubject([]);
   objects$: Observable<MeshObject[]> = this.objects.asObservable();
 

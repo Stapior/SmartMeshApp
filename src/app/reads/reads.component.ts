@@ -14,7 +14,7 @@ import {ReadsService} from './reads.service';
   templateUrl: './reads.component.html',
   styleUrls: ['./reads.component.scss']
 })
-export class ReadsComponent implements AfterViewInit, OnInit {
+export class ReadsComponent implements AfterViewInit {
 
   view: any[] = [700, 300];
   xAxisLabel = 'X';
@@ -259,7 +259,7 @@ export class ReadsComponent implements AfterViewInit, OnInit {
 
     this.maxValue = Math.max.apply(Math, rawValues);
     this.minValue = Math.min.apply(Math, rawValues);
-    this.averageValue = sum / value.values.length;
+    this.averageValue = (sum / value.values.length).toFixed(2);
   }
 
   private setMainChartConfig(value: ObservedValueOf<Observable<{ values: DocumentChangeAction<unknown>[]; range: ObservedValueOf<Observable<{ endDate: any; startDate: any }>>; sensor: MeshObject }>>, sensorDataSeries: { name: Date; value: any }[]): void {

@@ -15,6 +15,7 @@ import {angularMath} from 'angular-ts-math';
 
 export class ClimateComponent implements AfterViewInit {
 
+
   // this shows up as default time.
   getTime = '00:00';
 
