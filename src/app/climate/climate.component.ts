@@ -15,6 +15,11 @@ import {angularMath} from 'angular-ts-math';
 
 export class ClimateComponent implements AfterViewInit {
 
+  getUrl()
+  {
+    return 'url(\'/assets/images/background.png\')';
+  };
+
   // this shows up as default time.
   getTime = '00:00';
 

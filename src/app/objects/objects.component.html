@@ -1,4 +1,4 @@
-<div class="content">
+<div class="content" [ngStyle]="{'background-image': getUrl(), 'background-repeat': 'no-repeat', 'background-attachment': 'fixed', 'background-size': 'cover'}">
     <mat-button-toggle-group name="fontStyle" aria-label="Font Style" [(value)]="currentType"
                              (valueChange)="onChangeType($event)" >
       <mat-button-toggle *ngFor="let type of types | async" [value]="type">{{type}}</mat-button-toggle>
