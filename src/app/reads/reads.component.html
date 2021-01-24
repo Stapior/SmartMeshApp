@@ -88,9 +88,11 @@
       </ngx-charts-line-chart>
     </div>
     <ng-container *ngIf="averageValue">
-      Average value: {{averageValue}}
-      Min value: {{minValue}}
-      Max value:{{maxValue}}
+      <p><br>
+        <b>Average value:</b> {{averageValue}}<br><br>
+        <b>Min value:</b> {{minValue}}<br><br>
+        <b>Max value:</b> {{maxValue}}
+      </p>
     </ng-container>
     <div class="buttons-container">
       <button mat-raised-button (click)="export()" [disabled]="!dataToExport">
