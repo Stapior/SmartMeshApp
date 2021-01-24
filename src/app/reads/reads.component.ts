@@ -254,17 +254,17 @@ export class ReadsComponent implements AfterViewInit {
     this.averageValue = (sum / value.values.length);
 
     if (Number.isNaN(this.averageValue) || !Number.isFinite(this.averageValue)) {
-          this.averageValue = 'Brak danych';
+          this.averageValue = 'No data';
         } else {
           this.averageValue = this.averageValue.toFixed(2);
         }
     if (Number.isNaN(this.minValue) || !Number.isFinite(this.minValue)) {
-          this.minValue = 'Brak danych';
+          this.minValue = 'No data';
         } else {
           this.minValue = this.minValue.toFixed(2);
         }
     if (Number.isNaN(this.maxValue) || !Number.isFinite(this.maxValue)) {
-          this.maxValue = 'Brak danych';
+          this.maxValue = 'No data';
         } else {
           this.maxValue = this.maxValue.toFixed(2);
         }
