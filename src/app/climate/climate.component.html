@@ -36,13 +36,13 @@
 
       <ngx-charts-line-chart [view]="view" [scheme]="colorScheme" [legend]="true" [showXAxisLabel]="true"
                              [showYAxisLabel]="true" [xAxis]="true" [yAxis]="true" [xAxisLabel]="xAxisLabel"
-                             [yAxisLabel]="yAxisLabel"
+                             [yAxisLabel]="yAxisLabel" [autoScale]="true"
                              [results]="chartsSeriesTemp">
       </ngx-charts-line-chart>
 
       <ngx-charts-line-chart [view]="view" [scheme]="colorScheme" [legend]="true" [showXAxisLabel]="true"
                              [showYAxisLabel]="true" [xAxis]="true" [yAxis]="true" [xAxisLabel]="xAxisLabel"
-                             [yAxisLabel]="'Humidity'"
+                             [yAxisLabel]="'Humidity'" [autoScale]="true"
                              [results]="chartsSeriesHum">
       </ngx-charts-line-chart>
     </div>
