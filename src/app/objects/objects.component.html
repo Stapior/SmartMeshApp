@@ -1,10 +1,11 @@
-<div class="content">
-    <mat-button-toggle-group name="fontStyle" aria-label="Font Style" [(value)]="currentType"
-                             (valueChange)="onChangeType($event)" >
-      <mat-button-toggle *ngFor="let type of types | async" [value]="type">{{type}}</mat-button-toggle>
-    </mat-button-toggle-group>
-
+<div class="content main-content">
+  <mat-button-toggle-group class="wrap" name="fontStyle" aria-label="Font Style" [(value)]="currentType"
+                           (valueChange)="onChangeType($event)" >
+    <mat-button-toggle *ngFor="let type of types | async" [value]="type">{{ typeMappings[type] || type }}</mat-button-toggle>
+  </mat-button-toggle-group>
   <mat-accordion>
+
+
     <mat-expansion-panel *ngFor="let object of objects$ | async ; trackBy:trackByObjectId">
       <mat-expansion-panel-header>
         <mat-panel-title>

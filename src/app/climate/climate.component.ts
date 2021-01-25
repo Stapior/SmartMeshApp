@@ -59,8 +59,6 @@ export class ClimateComponent implements AfterViewInit {
 
 
   ngAfterViewInit(): void {
-
-
     this.availableSensors$ = this.objectsStore.getAllObjects().pipe(map(objects => objects.filter(object => {
         return object?.objectType?.endsWith('Sensor');
       }
@@ -174,12 +172,12 @@ export class ClimateComponent implements AfterViewInit {
     console.log('L: ', L);
     console.log('PMV: ', this.PMV);
     console.log('PPD: ', this.PPD);
-    console.log("TEST: ", Math.exp(2));
+    console.log('TEST: ', Math.exp(2));
   }
 
   private getHc(tcl: number): number {
     if ((2.38 * (Math.pow((tcl - this.averageValueTemp), 0.25))) < (12.1 * Math.pow(this.vAr, 0.5))) {
-      return 12.1 *Math.pow(this.vAr, 0.5);
+      return 12.1 * Math.pow(this.vAr, 0.5);
     } else {
       return 2.38 * (Math.pow((tcl - this.averageValueTemp), 0.25));
     }
@@ -217,7 +215,7 @@ export class ClimateComponent implements AfterViewInit {
   }
 
   private getPpd(): number {
-    return 100 - 95*Math.exp(-(0.03353*Math.pow(this.PMV,4) + 0.2179*Math.pow(this.PMV,2)));
+    return 100 - 95 * Math.exp(-(0.03353 * Math.pow(this.PMV, 4) + 0.2179 * Math.pow(this.PMV, 2)));
   }
 
   private getDatePlusDays(selectedDate: Date, days: number): Date {

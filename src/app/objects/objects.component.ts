@@ -18,6 +18,15 @@ export class ObjectsComponent implements OnInit {
   objects$: Observable<MeshObject[]>;
   type: BehaviorSubject<string> = new BehaviorSubject('all');
   currentType = 'all';
+  typeMappings = {
+    all: 'All objects',
+    luxSensor: 'Light sensor',
+    tempSensor: 'Temperature sensor',
+    humiditySensor: 'Humidity sensor',
+    relay: 'Relay',
+    switch: 'Switch',
+    'remote-switch': 'Remote switch'
+  };
 
   constructor(private objectsStore: ObjectsStore, private readsService: ReadsService, private router: Router) {
   }

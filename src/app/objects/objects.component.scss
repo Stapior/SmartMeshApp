@@ -5,6 +5,13 @@
     padding: 50px;
   }
 
+  .wrap{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+
   .buttons-container{
     button{
       margin: 10px;
