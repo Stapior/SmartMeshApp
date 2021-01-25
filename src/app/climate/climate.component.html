@@ -49,12 +49,12 @@
     <div fxLayout="column" class="second-column">
       <mat-form-field>
         <mat-label>Avarage value for temperature sensor [C]</mat-label>
-        <input matInput type="number" name="avgTemp" [(ngModel)]="averageValueTemp" [value]="averageValueTemp">
+        <input matInput type="number" step=".01" name="avgTemp" [(ngModel)]="averageValueTemp" [value]="averageValueTemp">
       </mat-form-field>
 
       <mat-form-field>
         <mat-label>Avarage value for humidity sensor [%]</mat-label>
-        <input matInput type="number" name="avgHum" [(ngModel)]="averageValueHum" [value]="averageValueHum">
+        <input matInput type="number" step=".01" name="avgHum" [(ngModel)]="averageValueHum" [value]="averageValueHum">
       </mat-form-field>
 
       <mat-form-field>
@@ -97,11 +97,11 @@
       <div class="result-header">Calculated comfort indicators</div>
       <mat-form-field>
         <mat-label>PMV</mat-label>
-        <input matInput type="number" name="PMV" [readonly]="true" [(ngModel)]="PMV">
+        <input matInput type="number" step=".01" name="PMV" [readonly]="true" [(ngModel)]="PMV">
       </mat-form-field>
       <mat-form-field>
         <mat-label>PPD [%]</mat-label>
-        <input matInput type="number" name="PPD" [readonly]="true" [(ngModel)]="PPD">
+        <input matInput type="number" step=".01" name="PPD" [readonly]="true" [(ngModel)]="PPD">
       </mat-form-field>
     </div>
   </form>
