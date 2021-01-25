@@ -11,11 +11,11 @@
     </button>
   </div>
   <div fxShow="true" fxHide.lt-md="true" class="toolbar-buttons">
-    <button mat-button routerLinkActive="active-link" routerLink="objects">Obiekty
+    <button mat-button routerLinkActive="active-link" routerLink="objects">Objects
     </button>
-    <button mat-button routerLinkActive="active-link" routerLink="reads">Wartości czujników
+    <button mat-button routerLinkActive="active-link" routerLink="reads">Sensor values
     </button>
-    <button mat-button routerLinkActive="active-link" routerLink="climate">Komfort klimatyczny
+    <button mat-button routerLinkActive="active-link" routerLink="climate">Microclimatic comfort
     </button>
     <span class="spacer"></span>
     <button mat-raised-button class="menu-right" color="warn" (click)="authService.SignOut()">Logout
@@ -25,9 +25,9 @@
 <mat-sidenav-container fxFlexFill class="example-container" [ngStyle]="{'height': 'revert'}">
   <mat-sidenav color="primary" #sidenav fxLayout="column" mode="over" opened="false" fxHide.gt-sm="true">
     <div fxLayout="column" fxLayoutGap="10px">
-      <a mat-button routerLinkActive="active-link" routerLink="objects">Obiekty</a>
-      <a mat-button routerLinkActive="active-link" routerLink="reads">Wartości czujników</a>
-      <a mat-button routerLinkActive="active-link" routerLink="climate">Komfort klimatyczny</a>
+      <a mat-button routerLinkActive="active-link" routerLink="objects">Objects </a>
+      <a mat-button routerLinkActive="active-link" routerLink="reads">Sensor values</a>
+      <a mat-button routerLinkActive="active-link" routerLink="climate">Microclimatic comfort </a>
       <div fxFlexAlign="center">
         <button mat-raised-button color="warn" (click)="authService.SignOut()">Logout
         </button>
