@@ -5,7 +5,6 @@ import {MeshObject} from '../objects/object';
 import {delay, map, switchMap, throttleTime} from 'rxjs/operators';
 import {ObjectsStore} from '../objects/objects-store.service';
 import {NgForm, NgModel} from '@angular/forms';
-import {angularMath} from 'angular-ts-math';
 
 @Component({
   selector: 'app-climate',
@@ -27,11 +26,11 @@ export class ClimateComponent implements AfterViewInit {
   averageValueHum = 0;
   PMV = 0;
   PPD = 0;
-  M = 1.0; // metabolizm
-  W = 0; // praca zewnetrzna
-  Icl = 1; // opor cieplny odziezy
-  tr = 0; // srednia temperatura promieniowania
-  vAr = 0.1; // wzgledna predkosc przeplywu powietrza
+  M = 1.0; // Metabolic rate
+  W = 0; // External work
+  Icl = 1; // Clothing level
+  tr = 0; // Mean radiant temperature
+  vAr = 0.1; // Air speed
 
   colorScheme = {
     domain: ['#5AA454', '#E44D25', '#CFC0BB', '#7aa3e5', '#a8385d', '#aae3f5']
@@ -59,6 +58,8 @@ export class ClimateComponent implements AfterViewInit {
 
 
   ngAfterViewInit(): void {
+
+
     this.availableSensors$ = this.objectsStore.getAllObjects().pipe(map(objects => objects.filter(object => {
         return object?.objectType?.endsWith('Sensor');
       }
@@ -113,6 +114,7 @@ export class ClimateComponent implements AfterViewInit {
         const sensorDataSeries = this.getSensorDataSeries(day, values);
         const sum = sensorDataSeries.map(value => value.value).reduce((a, b) => a + b, 0);
         this.averageValueHum = sum / sensorDataSeries.length;
+        this.averageValueHum = Math.round((this.averageValueHum + Number.EPSILON) * 100) / 100;
         this.chartsSeriesHum = [{name: 'Humidity sensor', series: sensorDataSeries}];
       } else {
         this.chartsSeriesHum = [];
@@ -125,6 +127,7 @@ export class ClimateComponent implements AfterViewInit {
         const sensorDataSeries = this.getSensorDataSeries(day, values);
         const sum = sensorDataSeries.map(value => value.value).reduce((a, b) => a + b, 0);
         this.averageValueTemp = sum / sensorDataSeries.length;
+        this.averageValueTemp = Math.round((this.averageValueTemp + Number.EPSILON) * 100) / 100;
         this.chartsSeriesTemp = [{name: 'Temperature sensor', series: sensorDataSeries}];
       } else {
         this.chartsSeriesTemp = [];
@@ -158,21 +161,14 @@ export class ClimateComponent implements AfterViewInit {
   private computeClimateComfort(): void {
     this.tr = this.averageValueTemp;
     const pa = this.averageValueTemp * this.averageValueHum * 0.001;
-    console.log('pa: ', pa);
     const fcl = this.getFcl();
-    console.log('fcl: ', fcl);
     const C1 = this.computeC1(pa);
     const C2 = this.computeC2(pa);
     const tcl = this.computeTcl(C1, C2);
-    console.log('tcl: ', tcl);
     const hc = this.getHc(tcl);
     const L = this.getL(fcl, tcl, hc, C1, C2);
     this.PMV = this.getPmv(L);
     this.PPD = this.getPpd();
-    console.log('L: ', L);
-    console.log('PMV: ', this.PMV);
-    console.log('PPD: ', this.PPD);
-    console.log('TEST: ', Math.exp(2));
   }
 
   private getHc(tcl: number): number {
@@ -211,11 +207,14 @@ export class ClimateComponent implements AfterViewInit {
   }
 
   private getPmv(L: number): number {
-    return (0.303 * Math.exp (-0.036 * this.M * (58.2)) + 0.028) * L;
+
+    const result = (0.303 * Math.exp (-0.036 * this.M * (58.2)) + 0.028) * L;
+    return Math.round((result + Number.EPSILON) * 100) / 100;
   }
 
   private getPpd(): number {
-    return 100 - 95 * Math.exp(-(0.03353 * Math.pow(this.PMV, 4) + 0.2179 * Math.pow(this.PMV, 2)));
+    const result =  100 - 95*Math.exp(-(0.03353*Math.pow(this.PMV,4) + 0.2179*Math.pow(this.PMV,2)));
+    return Math.round((result + Number.EPSILON) * 100) / 100;
   }
 
   private getDatePlusDays(selectedDate: Date, days: number): Date {

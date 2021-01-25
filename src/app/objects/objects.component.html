@@ -9,7 +9,7 @@
     <mat-expansion-panel *ngFor="let object of objects$ | async ; trackBy:trackByObjectId">
       <mat-expansion-panel-header>
         <mat-panel-title>
-          Nazwa: {{object.name}}
+          Name: {{object.name}}
         </mat-panel-title>
         <mat-panel-description >
           <div fxLayout="row" fxLayoutAlign="center center">
@@ -30,7 +30,7 @@
               </button>
             </div>
             <div fxShow="true" fxHide.lt-md="true">
-              Opis: {{object.description}}
+              Description: {{object.description}}
             </div>
           </div>
         </mat-panel-description>
@@ -38,44 +38,44 @@
       <div class="content">
         <form class="form" #objectForm="ngForm">
           <mat-form-field floatLabel="always">
-            <input matInput placeholder="Nazwa"
+            <input matInput placeholder="Name"
                    [(ngModel)]="object.name"
-                   name="Nazwa">
+                   name="Name">
           </mat-form-field>
           <mat-form-field floatLabel="always">
-            <input matInput placeholder="Opis"
+            <input matInput placeholder="Description"
                    [(ngModel)]="object.description"
-                   name="Opis">
+                   name="Description ">
           </mat-form-field>
           <mat-form-field floatLabel="always">
-            <input matInput placeholder="Typ urządzenia"
+            <input matInput placeholder="Device type"
                    [(ngModel)]="object.objectType"
                    disabled
-                   name="Typ urządzenia">
+                   name="Device type">
           </mat-form-field>
           <mat-form-field floatLabel="always">
-            <input matInput placeholder="Identyfikator węzła"
+            <input matInput placeholder="Node identifier"
                    [(ngModel)]="object.nodeId"
                    disabled
-                   name="Identyfikator węzła">
+                   name="Node identifier">
           </mat-form-field>
           <mat-form-field floatLabel="always">
-            <input matInput placeholder="Identyfikator wewnętrzny"
+            <input matInput placeholder="Internal identifier"
                    [(ngModel)]="object.objectId"
                    disabled
-                   name="Identyfikator wewnętrzny">
+                   name="Internal identifier">
           </mat-form-field>
           <mat-form-field *ngIf="object.objectType === 'relay'" floatLabel="always">
-            <input matInput placeholder="Wartość"
+            <input matInput placeholder="Value"
                    [(ngModel)]="object.value"
                    disabled
-                   name="Wartość">
+                   name="Value">
           </mat-form-field>
         </form>
         <div class="buttons-container">
           <button mat-raised-button color="primary"
                   (click)="updateCourse(object)">
-            Zapisz
+            Save
           </button>
           <button *ngIf="object.objectType === 'relay'" mat-raised-button color="primary"
                   (click)="changeValue(object)">
