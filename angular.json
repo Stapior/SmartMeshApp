@@ -5,7 +5,12 @@
   "projects": {
     "HomeMeshApp": {
       "projectType": "application",
-      "schematics": {},
+      "schematics": {
+        "@schematics/angular:component": {
+        "inlineTemplate": true,
+        "inlineStyle": false,
+        "styleext": "scss"
+      }},
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",

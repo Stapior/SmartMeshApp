@@ -24,7 +24,7 @@ import {FlexLayoutModule} from '@angular/flex-layout';
 import {NgxChartsModule} from '@swimlane/ngx-charts';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {NgxMaterialTimepickerModule} from 'ngx-material-timepicker';
-
+import { CustomSwitchComponent } from './custom-switch/custom-switch.component';
 
 
 @NgModule({
@@ -38,7 +38,8 @@ import {NgxMaterialTimepickerModule} from 'ngx-material-timepicker';
     ForgotPasswordComponent,
     VerifyEmailComponent,
     AppBarComponent,
-    LoginBarComponent
+    LoginBarComponent,
+    CustomSwitchComponent
   ],
   imports: [
     BrowserModule,
@@ -55,7 +56,6 @@ import {NgxMaterialTimepickerModule} from 'ngx-material-timepicker';
     MatFormFieldModule,
     NgxMaterialTimepickerModule,
     NgxChartsModule
-    
   ],
   providers: [],
   bootstrap: [AppComponent]

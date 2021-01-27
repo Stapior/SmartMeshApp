@@ -10,6 +10,7 @@ import {SignUpComponent} from '../login/sign-up/sign-up.component';
 import {AuthGuard} from '../shared/guard/auth.guard';
 import {AppBarComponent} from '../app-bar/app-bar.component';
 import {LoginBarComponent} from '../login/login-bar.component';
+import {CustomSwitchComponent} from '../custom-switch/custom-switch.component';
 
 
 const routes: Routes = [
@@ -26,6 +27,7 @@ const routes: Routes = [
       {path: 'objects', component: ObjectsComponent, canActivate: [AuthGuard]},
       {path: 'reads', component: ReadsComponent, canActivate: [AuthGuard]},
       {path: 'climate', component: ClimateComponent, canActivate: [AuthGuard]},
+      {path: 'custom-switch', component: CustomSwitchComponent, canActivate: [AuthGuard]},
     ]
   },
   {path: '', redirectTo: 'meshHome/objects', pathMatch: 'full'},
