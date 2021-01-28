@@ -97,5 +97,6 @@ export class CustomSwitchComponent implements OnInit {
       name: this.newName,
       added: false
     });
+    this.newName = undefined;
   }
 }
