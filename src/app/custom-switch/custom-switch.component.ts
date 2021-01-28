@@ -89,9 +89,9 @@ export class CustomSwitchComponent implements OnInit {
     return Math.floor(Math.random() * (max - min)) + min;
   }
 
-  addNewSwitch(): Promise<DocumentReference> {
+  addNewSwitch(): void {
     this.adding = false;
-    return this.firestore.collection('switches').add({
+    this.firestore.collection('switches').add({
       nodeId: this.getRandomInt(),
       objectId: this.getRandomInt(),
       name: this.newName,
