@@ -90,6 +90,7 @@ export class CustomSwitchComponent implements OnInit {
   }
 
   addNewSwitch(): Promise<DocumentReference> {
+    this.adding = false;
     return this.firestore.collection('switches').add({
       nodeId: this.getRandomInt(),
       objectId: this.getRandomInt(),
