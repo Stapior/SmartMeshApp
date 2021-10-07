@@ -7,7 +7,6 @@ import {ObjectsStore} from '../objects/objects-store.service';
 import {NgModel} from '@angular/forms';
 import {SENSOR_TYPES} from './sensor-types';
 import * as FileSaver from 'file-saver';
-import {ReadsService} from './reads.service';
 
 @Component({
   selector: 'app-reads',
@@ -43,16 +42,16 @@ export class ReadsComponent implements AfterViewInit, OnInit {
   @ViewChild('startDateInput') startDateInput: NgModel;
   @ViewChild('endDateInput') endDateInput: NgModel;
 
-  constructor(private firestore: AngularFirestore, private objectsStore: ObjectsStore, private readsService: ReadsService) {
+  constructor(private firestore: AngularFirestore, private objectsStore: ObjectsStore ) {
 
   }
 
   ngOnInit(): void {
-    const preSelected = this.readsService.preSelectedSensor;
-    if (preSelected) {
-      this.selectedSensor = preSelected;
-      this.readsService.preSelectedSensor = undefined;
-    }
+    // const preSelected = this.readsService.preSelectedSensor;
+    // if (preSelected) {
+    //   this.selectedSensor = preSelected;
+    //   this.readsService.preSelectedSensor = undefined;
+    // }
   }
 
   ngAfterViewInit(): void {

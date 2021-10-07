@@ -3,7 +3,7 @@ import {ObjectsStore} from './objects-store.service';
 import {MeshObject} from './object';
 import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
-import {ReadsService} from '../reads/reads.service';
+
 import {Router} from '@angular/router';
 
 @Component({
@@ -28,7 +28,7 @@ export class ObjectsComponent implements OnInit {
     'remote-switch': 'Remote switch'
   };
 
-  constructor(private objectsStore: ObjectsStore, private readsService: ReadsService, private router: Router) {
+  constructor(private objectsStore: ObjectsStore, private router: Router) {
   }
 
   ngOnInit(): void {
@@ -61,7 +61,7 @@ export class ObjectsComponent implements OnInit {
 
   goToValues($event: MouseEvent, object: MeshObject): void {
     $event.stopPropagation();
-    this.readsService.preSelectedSensor = object;
+    // this.readsService.preSelectedSensor = object;
     this.router.navigate(['meshHome/reads']);
   }
 }
